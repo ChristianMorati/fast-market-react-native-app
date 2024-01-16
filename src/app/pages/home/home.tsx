@@ -3,14 +3,11 @@ import { SectionList, SafeAreaView, StyleSheet, Text } from 'react-native';
 import FeaturedProducts from '../../components/products/featured-products/featured-products';
 import { colors } from '../../global-styles';
 import { useProductContext } from '../../contexts/product-context';
-import Product from '../../models/productModel';
-import Test from '../../components/test/test';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import { Button } from '@rneui/base';
 
 
 function Home() {
-
-  const productContext = useProductContext();
 
   const sections = [
     {

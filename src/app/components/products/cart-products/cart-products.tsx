@@ -102,8 +102,7 @@ const CartProducts: React.FC = () => {
                             style={[styles.buttonFinalizar]}
                             onPress={
                                 () => {
-                                    productContext.setIsScannerAlive(false);
-                                    navigation.navigate('Payment');
+                                    navigation.navigate('Pagamento');
                                 }}>
                             <Text style={[styles.buttonFinalizarText]}>Finalizar</Text>
                         </Pressable>

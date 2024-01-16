@@ -7,8 +7,6 @@ import { BASE_URL_API } from '@env';
 import { useAuth } from './auth-context';
 
 interface ProductContextProps {
-  isScannerAlive: boolean;
-  setIsScannerAlive: React.Dispatch<React.SetStateAction<boolean>>;
   isLoadingProducts: boolean;
   setIsLoadingProducts: React.Dispatch<React.SetStateAction<boolean>>;
   sumProducts: number;
@@ -34,7 +32,6 @@ export default function ProductProvider({ children }: { children: React.ReactNod
 
   const [sumProducts, setSumProducts] = useState<number>(0);
   const [cartProducts, setCartProducts] = useState<Product[]>([]);
-  const [isScannerAlive, setIsScannerAlive] = useState<boolean>(false);
   const [products, setProducts] = useState<Product[] | undefined>(undefined);
   const [product, setProduct] = useState<Product | undefined>(undefined);
   const [isLoadingProducts, setIsLoadingProducts] = useState<boolean>(true);
@@ -117,49 +114,23 @@ export default function ProductProvider({ children }: { children: React.ReactNod
 
 
   const getProductByCode = async (code: string): Promise<Product | undefined> => {
-    try {
+    return new Promise(async (resolve, reject) => {
       const token = await AsyncStorage.getItem('TOKEN');
+      const response = await axios.get(`${BaseUrlApi}/code/${code}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
+        });
 
-      const response = await fetch(`${BaseUrlApi}/code/${code}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
-      });
+      if (response.status !== 200) { reject(undefined); }
 
-      if (!response.ok) {
-        throw new Error("Failed getProductByCode");
-      }
-
-      const product: Product = await response.json();
+      const product = response.data;
       setProduct(product);
-
-      return product;
-    } catch (error) {
-      return undefined;
-    }
+      resolve(product);
+    })
   };
-
-  // const getProductByCode = async (code: string): Promise<Product | undefined> => {
-  //   const token = await AsyncStorage.getItem('TOKEN');
-  //   return new Promise(async (resolve, reject) => {
-  //     const response = await fetch(`${BaseUrlApi}/code/${code}`, {
-  //       headers: {
-  //         Authorization: `Bearer ${token}`,
-  //         'Content-Type': 'application/json'
-  //       }
-  //     });
-
-  //     if (response.status !== 200) {
-  //       reject("failed getProductByCode");
-  //       console.log(response.status)
-  //     }
-
-  //     const product = await response.json();
-  //     setProduct(product);
-  //     resolve(product);
-  //   });
-  // }
 
   const showToast = (type: 'success' | 'error', text1: string, text2: string): void => {
     Toast.show({
@@ -185,7 +156,6 @@ export default function ProductProvider({ children }: { children: React.ReactNod
 
   return (
     <ProductContext.Provider value={{
-      isScannerAlive,
       isLoadingProducts,
       setIsLoadingProducts,
       sumProducts,
@@ -196,7 +166,6 @@ export default function ProductProvider({ children }: { children: React.ReactNod
       setProducts,
       getProductByCode,
       LoadProducts,
-      setIsScannerAlive,
       showToast,
       handleAddProductToCart,
       handleRemoveFromCart,

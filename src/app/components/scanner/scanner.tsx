@@ -12,19 +12,15 @@ interface ScannerProps {
 
 
 const Scanner: React.FC<ScannerProps> = ({ onCodeScanned, clearBarcodeData, BarCodeScannerContainerStyle, BarCodeScannerReScanButtonStyle }) => {
-  const { isScannerAlive } = useContext(ProductContext);
-
   const [hasPermission, setHasPermission] = useState<boolean | null>(null);
   const [scanned, setScanned] = useState(false);
 
   useEffect(() => {
-    if (isScannerAlive) {
-      const getBarCodeScannerPermissions = async () => {
-        const { status } = await BarCodeScanner.requestPermissionsAsync();
-        setHasPermission(status === 'granted');
-      };
-      getBarCodeScannerPermissions();
-    }
+    const getBarCodeScannerPermissions = async () => {
+      const { status } = await BarCodeScanner.requestPermissionsAsync();
+      setHasPermission(status === 'granted');
+    };
+    getBarCodeScannerPermissions();
   }, []);
 
   if (hasPermission === null) {
@@ -44,10 +40,8 @@ const Scanner: React.FC<ScannerProps> = ({ onCodeScanned, clearBarcodeData, BarC
   }
 
   const handleBarCodeScanned = ({ type, data }: BarCodeEvent) => {
-    if (isScannerAlive) {
-      setScanned(true);
-      onCodeScanned(type, data);
-    }
+    setScanned(true);
+    onCodeScanned(type, data);
   };
 
   return (

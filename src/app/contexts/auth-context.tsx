@@ -1,9 +1,8 @@
 import * as React from 'react';
+import { BASE_URL_API } from '@env';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as WebBrowser from 'expo-web-browser';
 import * as Google from 'expo-auth-session/providers/google';
-import { BASE_URL_API } from '@env';
-
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import jwt_decode from 'jwt-decode';
 import axios from 'axios';
 import { useNavigation } from '@react-navigation/native';
@@ -23,7 +22,7 @@ interface AuthContextProps {
 
 export const AuthContext = React.createContext<AuthContextProps>({} as AuthContextProps);
 
-export default function AuthProvider({ children, navigation }: { children: React.ReactNode }) {
+export default function AuthProvider({ children }: { children: React.ReactNode }) {
 
     // const [userInfo, setUserInfo] = React.useState(null);
     // const [request, response, promptAsync] = Google.useAuthRequest({
@@ -62,12 +61,13 @@ export default function AuthProvider({ children, navigation }: { children: React
     const BaseUrlApi: string = `${BASE_URL_API}/auth`;
 
     const [isLogged, setIsLogged] = React.useState<boolean>(false);
+    
     const [isTokenExpired, setIsTokenExpired] = React.useState<boolean>(false);
     const [accessToken, setAT] = React.useState<string>("");
     const [isLoadingApp, setIsLoadingApp] = React.useState<boolean>(true);
 
     React.useEffect(() => {
-        AsyncStorage.setItem('TOKEN', "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjE1LCJ1c2VybmFtZSI6ImNocmlkZGRjY2NkZHNnY2RAZ21haWwuY28zbSIsImlhdCI6MTkwNTI3MzcwMCwiZXhwIjoxOTA1MjczNzYwfQ.I9915MhFwk9WSSV63H3DfTGd6FidVnyOx_4HeLgXzdo");
+        AsyncStorage.setItem('TOKEN', "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjM0LCJ1c2VybmFtZSI6ImRAZ2R6bXNzeHd4c3dzZGRhZGlsLmNvM20iLCJpYXQiOjE3MDU0MzgwMjgsImV4cCI6MTcwNTQzODA4OH0.Or-FZkA5vri8Pgv_Hm7CvB8HDZqzqOmn8HSQgHTz6Gw");
       }, []);
 
     const setAccessToken = async (token: string) => {
@@ -78,7 +78,6 @@ export default function AuthProvider({ children, navigation }: { children: React
         const accessToken = await AsyncStorage.getItem('TOKEN');
         return accessToken;
     };
-
 
     // const renewAccessToken = async () => {
 

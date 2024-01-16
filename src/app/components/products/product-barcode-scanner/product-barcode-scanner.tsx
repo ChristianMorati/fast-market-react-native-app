@@ -7,15 +7,29 @@ import { useProductContext } from '../../../contexts/product-context';
 import { AntDesign } from '@expo/vector-icons';
 import { useRef } from 'react';
 import { Button, Text } from '@rneui/themed';
+import { useFocusEffect, useIsFocused } from '@react-navigation/native';
 
 const ProductBarCodeScanner: React.FC = () => {
   const [type, setType] = React.useState<string>('')
   const [data, setData] = React.useState<string>('')
+  const [scannerActive, setScannerActive] = React.useState(false);
 
   const productContext = useProductContext();
 
+  const isFocused = useIsFocused();
+
+  useFocusEffect(
+    React.useCallback(() => {
+      setScannerActive(true);
+
+      return () => {
+        setScannerActive(false);
+      };
+    }, [])
+  );
+
   const onCodeScanned = (type: string, data: string) => {
-    if (productContext.isScannerAlive && !modalVisible) {
+    if (!modalVisible) {
       setType(type);
       setData(data);
       setCode(data);
@@ -23,14 +37,12 @@ const ProductBarCodeScanner: React.FC = () => {
   };
 
   const clearBarcodeData = () => {
-    if (productContext.isScannerAlive) {
-      setType('');
-      setData('');
-      setCode('');
-      setProductFounded(false);
-      productContext.setProduct(undefined)
-      setProductFoundedError('')
-    }
+    setType('');
+    setData('');
+    setCode('');
+    setProductFounded(false);
+    productContext.setProduct(undefined)
+    setProductFoundedError('')
   }
 
   const [code, setCode] = React.useState('');
@@ -143,7 +155,7 @@ const ProductBarCodeScanner: React.FC = () => {
   return (
     <View style={styles.container}>
       <View style={styles.scannerArea}>
-        {productContext.isScannerAlive && (
+        {scannerActive && isFocused && (
           <Scanner
             onCodeScanned={onCodeScanned}
             clearBarcodeData={clearBarcodeData}

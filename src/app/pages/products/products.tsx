@@ -8,6 +8,7 @@ import { colors } from '../../global-styles';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 
+
 const Products: React.FC = () => {
   const sections = [
     {
