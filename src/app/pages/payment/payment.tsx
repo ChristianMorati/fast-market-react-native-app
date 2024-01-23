@@ -45,7 +45,7 @@ const Payment: React.FC = () => {
   return (
     <GestureHandlerRootView style={styles.container}>
       <View>
-        <Text style={styles.title}>Selecione o Método de Pagamento</Text>
+        {/* <Text style={styles.title}>Selecione o Método de Pagamento</Text> */}
       </View>
       <FlatList data={[
         {

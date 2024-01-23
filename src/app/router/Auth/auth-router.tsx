@@ -6,14 +6,13 @@ import { useProductContext } from '../../contexts/product-context';
 import Home from '../../pages/home/home';
 import Products from '../../pages/products/products';
 import Payment from '../../pages/payment/payment';
+import NonAuthRouter from '../nonAuth/non-auth-router';
 
 
 const Tab = createBottomTabNavigator();
 const ProductsStackNavigator = createNativeStackNavigator();
 
 function ProductStack() {
-  const productContext = useProductContext();
-
   return (
     <ProductsStackNavigator.Navigator
       initialRouteName='Products'
@@ -26,8 +25,9 @@ function ProductStack() {
         name="Pagamento"
         component={Payment}
         options={{
-
-        }} />
+          navigationBarColor: 'black'
+        }}
+      />
     </ProductsStackNavigator.Navigator>
   )
 }
@@ -56,7 +56,7 @@ function AuthRouter() {
         }}
       />
       <Tab.Screen
-        name="Products"
+        name="Comprar"
         component={ProductStack}
         options={
           {

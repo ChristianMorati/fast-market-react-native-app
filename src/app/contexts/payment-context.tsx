@@ -2,7 +2,7 @@ import React, { Dispatch, ReactNode, SetStateAction, createContext, useState } f
 import { useProductContext } from './product-context';
 import { useStripe } from '@stripe/stripe-react-native';
 import { Alert } from 'react-native';
-import { BASE_URL_API } from '@env';
+import { BASE_URL_API } from '../../../config';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from '@react-navigation/native';
 

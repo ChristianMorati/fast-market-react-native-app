@@ -68,8 +68,6 @@ const ProductBarCodeScanner: React.FC = () => {
     try {
       const productSearched = await productContext.getProductByCode(code);
 
-      if (!productSearched) throw Error('Produto não encontrado!');
-
       productContext.setProduct(productSearched);
       setProductFounded(true);
       textInputRef.current.blur();
@@ -99,7 +97,7 @@ const ProductBarCodeScanner: React.FC = () => {
           transparent={true}
           visible={modalVisible}
           onRequestClose={() => {
-            setModalVisible(!modalVisible);
+            setModalVisible(false);
             clearBarcodeData();
           }}>
           <View style={styles.centeredView}>
@@ -209,7 +207,7 @@ const ProductBarCodeScanner: React.FC = () => {
         )}
         {/*end messages */}
 
-        {productFounded !== undefined && (<ProductModal />)}
+        {productFounded && (<ProductModal />)}
 
         <View style={styles.containerInputCode}>
           <TextInput

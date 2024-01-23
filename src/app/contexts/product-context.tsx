@@ -3,7 +3,7 @@ import Toast from 'react-native-toast-message';
 import Product from '../models/productModel';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
-import { BASE_URL_API } from '@env';
+import { BASE_URL_API } from '../../../config';
 import { useAuth } from './auth-context';
 
 interface ProductContextProps {
@@ -36,6 +36,8 @@ export default function ProductProvider({ children }: { children: React.ReactNod
   const [product, setProduct] = useState<Product | undefined>(undefined);
   const [isLoadingProducts, setIsLoadingProducts] = useState<boolean>(true);
 
+  const auth = useAuth();
+
   useEffect(() => {
     const getCartProductsInDB = async () => {
       try {
@@ -53,19 +55,20 @@ export default function ProductProvider({ children }: { children: React.ReactNod
     }
 
     getCartProductsInDB();
-  }, []);
-
-  useEffect(() => {
-    const total: number = cartProducts.reduce((accumulator, product) => accumulator + product.unit_price, 0);
-    setSumProducts(Number(total.toFixed(2)));
-
-    setCartProductsLocalStorage();
-  }, [cartProducts]);
+  }, [auth.signedIn]);
 
   useEffect(() => {
     getCartProductsLocalStorage();
   }, []);
 
+  useEffect(() => {
+    if(cartProducts) {
+      const total: number = cartProducts.reduce((accumulator, product) => accumulator + product.unit_price, 0);
+      setSumProducts(Number(total.toFixed(2)));
+    }
+
+    setCartProductsLocalStorage();
+  }, [cartProducts]);
 
   const setCartProductsLocalStorage = async () => {
     await AsyncStorage.setItem('cartProducts', JSON.stringify(cartProducts))
@@ -104,14 +107,15 @@ export default function ProductProvider({ children }: { children: React.ReactNod
           }
         });
 
-      if (response.status !== 200) { reject(undefined); }
+      if (response.status !== 200) { reject(()=>{
+        throw new Error("Não abra o modal");
+      }); }
 
       const products = response.data;
       setProducts(products);
       resolve(products);
     });
   };
-
 
   const getProductByCode = async (code: string): Promise<Product | undefined> => {
     return new Promise(async (resolve, reject) => {
