@@ -5,6 +5,7 @@ import { Alert } from 'react-native';
 import { BASE_URL_API } from '../../../config';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from '@react-navigation/native';
+import axios from 'axios';
 
 type Intent = {
   paymentIntent: string
@@ -21,7 +22,6 @@ export const PaymentContext = createContext<PaymentContextProps>({} as PaymentCo
 
 export default function PaymentProvider({ children }: { children: ReactNode }) {
   const [paymentIntent, setPaymentIntent] = useState<Intent | undefined>(undefined);
-  const BaseUrlApi: string = `${BASE_URL_API}/payment`;
 
   const productContext = useProductContext()
   const { initPaymentSheet, presentPaymentSheet } = useStripe();
@@ -31,21 +31,22 @@ export default function PaymentProvider({ children }: { children: ReactNode }) {
     try {
       const token = await AsyncStorage.getItem('TOKEN');
 
-      const response = await fetch(`${BaseUrlApi}/intent`, {
-        method: 'POST',
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
+      const response = await axios.post(`${BASE_URL_API}/payment/intent`,
+        {
           amount: Amount,
           currency: 'brl',
           automatic_payment_methods: {
             enabled: true
           }
-        }),
-      });
-      const data = await response.json();
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
+        }
+      );
+      const data = await response.data
       setPaymentIntent(data)
       return data;
     } catch (error) {

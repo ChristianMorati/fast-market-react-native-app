@@ -1,7 +1,6 @@
-import React, { useState, useEffect, useContext } from 'react';
-import { Text, View, StyleSheet, Button, ViewStyle, TouchableOpacity } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { Text, View, StyleSheet, ViewStyle, TouchableOpacity } from 'react-native';
 import { BarCodeScanner, BarCodeEvent } from 'expo-barcode-scanner';
-import { ProductContext } from '../../contexts/product-context';
 
 interface ScannerProps {
   onCodeScanned: (type: string, data: string) => void;

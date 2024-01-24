@@ -1,12 +1,12 @@
 import { StyleSheet } from "react-native";
 
+const temp2 = '#000'
 const temp = '#343333'
-const temp2 = 'black'
 
 export const colors = {
     mainColor: '#B84AB5',
     secondaryColor: '#24D906',
-    fiscalNoteColor: 'white',
+    fiscalNoteColor: '#E0E5BC',
     mainAppColor: temp,
     title: 'white',
     productFooter: '#F8BFF6',

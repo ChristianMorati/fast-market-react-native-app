@@ -49,37 +49,45 @@ const ProductBarCodeScanner: React.FC = () => {
   const [productFounded, setProductFounded] = React.useState<Boolean>(false);
   const [productFoundedError, setProductFoundedError] = React.useState<string>('');
   const [isLoadingProduct, setIsLoadingProduct] = React.useState<Boolean>(false);
-  const textInputRef = useRef(null);
+  const textInputRef = useRef<TextInput>(null);
   const [modalVisible, setModalVisible] = useState(false);
 
   const handleInputChange = (text: string) => {
     setProductFoundedError('')
     return setCode(text);
-  }
+  };
 
   const onCloseModal = () => {
     clearBarcodeData();
     setModalVisible(false);
-  }
+  };
+
+  const defineProduct = async () => {
+    const productSearched = await productContext.getProductByCode(code);
+
+    if(!productSearched) {
+      throw new Error("undefined");
+    }
+
+    productContext.setProduct(productSearched);
+    setProductFounded(true);
+    textInputRef.current?.blur();
+    setModalVisible(true);
+    setProductFoundedError('');
+  };
 
   const searchForProduct = async () => {
     setIsLoadingProduct(true);
 
     try {
-      const productSearched = await productContext.getProductByCode(code);
-
-      productContext.setProduct(productSearched);
-      setProductFounded(true);
-      textInputRef.current.blur();
-      setModalVisible(true);
-      setProductFoundedError('');
+      await defineProduct();
     } catch (error) {
       setProductFoundedError('Produto não encontrado');
       setProductFounded(false);
     } finally {
       setIsLoadingProduct(false);
     }
-  }
+  };
 
   useEffect(() => {
     if (code.length === 8 && !productContext.product) {

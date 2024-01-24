@@ -7,9 +7,12 @@ import { BASE_URL_API } from '../../../../config';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from '@react-navigation/native';
 import { useAuth } from '../../contexts/auth-context';
+import { NavigationType } from '../../router/root-navigator';
+import { useProductContext } from '../../contexts/product-context';
 
 export default function SignUp() {
-    const navigation = useNavigation();
+    const navigation: NavigationType = useNavigation();
+    const productsContext = useProductContext();
     const auth = useAuth();
 
     const [formData, setFormData] = useState({
@@ -44,6 +47,7 @@ export default function SignUp() {
 
             const data = await response.json();
             await AsyncStorage.setItem('TOKEN', data.access_token);
+            await productsContext.LoadProducts();
             auth.setSignedIn(true);
             return data;
         } catch (error) {

@@ -6,6 +6,7 @@ import { Feather } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import { useProductContext } from '../../../contexts/product-context';
 import { Swipeable } from 'react-native-gesture-handler';
+import { NavigationType } from '../../../router/root-navigator';
 
 interface ProductItemProps {
     item: Product;
@@ -42,7 +43,7 @@ const ProductItem: React.FC<ProductItemProps> = ({ item }) => {
             <View style={styles.productContainer}>
                 <View style={styles.descriptionContainer}>
                     <Image source={{ uri: item?.url_img }} style={[styles.image]} />
-                    <Text style={styles.description} numberOfLines={1} ellipsizeMode="middle">{item?.description.toUpperCase()}</Text>
+                    <Text style={styles.description} numberOfLines={1} ellipsizeMode="tail">{item?.description.toUpperCase()}</Text>
                 </View>
                 <View style={[styles.descriptionContainer, {
                     borderTopWidth: 1,
@@ -62,9 +63,9 @@ const ProductItem: React.FC<ProductItemProps> = ({ item }) => {
     );
 };
 
-const CartProducts: React.FC = () => {
+const CartProducts = () => {
     const productContext = useProductContext();
-    const navigation = useNavigation();
+    const navigation: NavigationType = useNavigation();
 
     return (
         <View style={styles.container}>
@@ -72,12 +73,13 @@ const CartProducts: React.FC = () => {
             <View style={globalStyles.cartHeaderContainer}>
                 <Text style={styles.title} >Carrinho</Text>
                 <Text style={[
-                    { fontWeight: 'bold' },
                     productContext.cartProducts.length < 10 ? { color: colors.secondaryColor } : { color: 'red' }
-                ]}
+                , {
+                    fontWeight: 'bold',
+                }]}
                 >
                     no carrinho: {productContext.cartProducts.length}</Text>
-                <Text style={styles.simpleText}>max: 10</Text>
+                <Text style={styles.simpleText}>máximo: 10</Text>
             </View>
             {productContext.cartProducts.length == 0 ? (
                 <View style={[styles.productContainer, { backgroundColor: colors.fiscalNoteColor }]}>
@@ -121,17 +123,15 @@ const styles = StyleSheet.create({
         height: 'auto',
     },
     productContainer: {
-        backgroundColor: 'white',
         flexDirection: 'column',
         paddingHorizontal: 4,
         marginVertical: 1,
+        backgroundColor: colors.fiscalNoteColor,
     },
     finalPriceContainer: {
         marginVertical: 1,
         padding: 6,
         backgroundColor: colors.fiscalNoteColor,
-        borderBottomLeftRadius: 8,
-        borderBottomRightRadius: 8,
     },
     priceContainer: {
         flexDirection: 'row',
@@ -169,7 +169,7 @@ const styles = StyleSheet.create({
         borderTopWidth: 1,
         borderStyle: 'solid',
         width: '100%',
-        marginTop: 6,
+        marginVertical: 10,
     },
     image: {
         width: 50,

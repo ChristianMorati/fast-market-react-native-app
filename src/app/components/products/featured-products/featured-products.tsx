@@ -1,5 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { View, Text, Image, StyleSheet, TouchableOpacity, FlatList } from 'react-native';
+import { View, Image, StyleSheet, TouchableOpacity, FlatList } from 'react-native';
+import { Text } from '@rneui/themed';
 import { colors, globalStyles } from '../../../global-styles';
 import Product from '../../../models/productModel';
 import Ionicons from '@expo/vector-icons/Ionicons';
@@ -20,19 +21,21 @@ const ProductItem: React.FC<ProductItemProps> = ({ item }) => {
                 source={{ uri: item?.url_img }}
                 style={styles.image}
             />
-            <Text style={styles.description} numberOfLines={2} ellipsizeMode="middle">{item?.description.toUpperCase()}</Text>
-            <View style={styles.priceContainer}>
-                <Text style={styles.price}>{productContext.formatToCurrency(item?.unit_price)}</Text>
+            <Text style={styles.description} numberOfLines={2} ellipsizeMode="tail">{item?.description.toUpperCase()}</Text>
+            <View style={{}}>
+                <View style={styles.priceContainer}>
+                    <Text style={styles.price}>{productContext.formatToCurrency(item?.unit_price)}</Text>
 
-                {productContext.cartProducts.length < 9 ? (
-                    <TouchableOpacity
-                        style={[globalStyles.button, styles.addToCart]}
-                        onPress={() => productContext.handleAddProductToCart(item)}
-                    >
-                        <FontAwesome name="cart-arrow-down" size={16} color="white" />
-                    </TouchableOpacity>
-                ) : <Text style={[globalStyles.button, styles.fullCart]}>
-                    <Ionicons name="md-cart-outline" size={14} color="white" /> Cheio</Text>}
+                    {productContext.cartProducts.length < 9 ? (
+                        <TouchableOpacity
+                            style={[globalStyles.button, styles.addToCart]}
+                            onPress={() => productContext.handleAddProductToCart(item)}
+                        >
+                            <FontAwesome name="cart-arrow-down" size={16} color="white" />
+                        </TouchableOpacity>
+                    ) : <Text style={[globalStyles.button, styles.fullCart]}>
+                        <Ionicons name="md-cart-outline" size={14} color="white" /> Cheio</Text>}
+                </View>
             </View>
         </View>
     );
@@ -43,9 +46,9 @@ const FeaturedProducts: React.FC = () => {
 
     return (
         <View style={styles.container}>
-            <Text style={styles.title}>Produtos em Destaque</Text>
             <View style={styles.container}>
                 <FlatList
+                    ListHeaderComponent={<Text h4 h4Style={{ color: 'white' }}>Produtos em Destaque</Text>}
                     data={productContext.products}
                     renderItem={({ item }) => (
                         <ProductItem item={item} />
@@ -65,22 +68,23 @@ const styles = StyleSheet.create({
         flex: 1,
         paddingTop: 6,
         height: 'auto',
-        paddingHorizontal: 6,
-        paddingBottom: 6,
+        padding: 3,
     },
     image: {
         height: 140,
         resizeMode: 'contain',
         backgroundColor: 'white',
+        // borderTopRightRadius: 10,
+        // borderTopLeftRadius: 10,
     },
     productContainer: {
         flex: 1,
         flexDirection: 'column',
         backgroundColor: colors.productFooter,
-        margin: 3,
-        paddingBottom: 6,
-        borderWidth: .4,
         borderColor: 'black',
+        margin: 2,
+        justifyContent: 'space-between'
+        // borderRadius: 10,
     },
     containerReload: {
         justifyContent: 'center',
@@ -97,13 +101,11 @@ const styles = StyleSheet.create({
         fontSize: 11,
         textAlign: 'center',
         paddingHorizontal: 2,
-        marginTop: 4,
-        fontWeight: '500',
+        fontWeight: '600',
     },
     priceContainer: {
         flexDirection: 'row',
         justifyContent: 'space-between',
-        alignItems: 'center',
         paddingHorizontal: 10,
         paddingVertical: 4,
     },
@@ -123,7 +125,8 @@ const styles = StyleSheet.create({
     addToCart: {
         backgroundColor: '#7D0E7C',
         paddingHorizontal: 12,
-        paddingVertical: 6
+        paddingVertical: 6,
+        alignSelf: 'flex-end'
     },
     fullCart: {
         backgroundColor: '#7D0E7C',

@@ -6,9 +6,15 @@ import { User } from '../../types/user';
 import { BASE_URL_API } from '../../../../config';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from '@react-navigation/native';
+import { NavigationType } from '../../router/root-navigator';
+import { useAuth } from '../../contexts/auth-context';
+import { useProductContext } from '../../contexts/product-context';
 
 export default function SignIn() {
-    const navigation = useNavigation();
+    const navigation: NavigationType = useNavigation();
+    const auth = useAuth();
+    const productsContext = useProductContext();
+
     const [formData, setFormData] = useState({
         name: '',
         username: '',
@@ -25,7 +31,7 @@ export default function SignIn() {
     };
 
     const signIn = (): Promise<User | undefined> => {
-        console.log('signup')
+        console.log('signin')
         return new Promise(async (resolve, reject) => {
             try {
                 const response = await fetch(`${BASE_URL_API}/auth/signin`, {
@@ -45,7 +51,8 @@ export default function SignIn() {
                 console.log(responseData);
                 const user = responseData;
                 if (user.access_token) {
-                    navigation.navigate('Home')
+                    await productsContext.LoadProducts();
+                    auth.setSignedIn(true);
                 }
 
                 await AsyncStorage.setItem('TOKEN', responseData.access_token);

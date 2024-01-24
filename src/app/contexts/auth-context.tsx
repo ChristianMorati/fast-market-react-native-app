@@ -12,8 +12,6 @@ export const AuthContext = React.createContext<AuthContextProps>({} as AuthConte
 
 export default function AuthProvider({ children }: { children: React.ReactNode }) {
 
-    const BaseUrlApi: string = `${BASE_URL_API}/auth`;
-    const [isLoadingApp, setIsLoadingApp] = React.useState<boolean>(true);
     const [signedIn, setSignedIn] = React.useState<boolean>(false);
     // const [userInfo, setUserInfo] = React.
 

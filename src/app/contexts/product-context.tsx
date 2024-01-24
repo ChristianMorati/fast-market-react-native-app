@@ -26,8 +26,6 @@ interface ProductContextProps {
 export const ProductContext = createContext<ProductContextProps>({} as ProductContextProps);
 
 export default function ProductProvider({ children }: { children: React.ReactNode }) {
-  const authContext = useAuth()
-
   const BaseUrlApi: string = `${BASE_URL_API}/product`;
 
   const [sumProducts, setSumProducts] = useState<number>(0);
@@ -39,36 +37,18 @@ export default function ProductProvider({ children }: { children: React.ReactNod
   const auth = useAuth();
 
   useEffect(() => {
-    const getCartProductsInDB = async () => {
-      try {
-        const products = await LoadProducts();
-        setProducts(products);
-      } catch (e) {
-        console.error('error ao carregar os products')
-      }
-      setIsLoadingProducts(false);
-
-      let listOfProducts = await AsyncStorage.getItem('cartProducts');
-      if (listOfProducts) {
-        setCartProducts(JSON.parse(listOfProducts));
-      }
-    }
-
-    getCartProductsInDB();
-  }, [auth.signedIn]);
-
-  useEffect(() => {
     getCartProductsLocalStorage();
   }, []);
 
   useEffect(() => {
-    if(cartProducts) {
+    if (cartProducts) {
       const total: number = cartProducts.reduce((accumulator, product) => accumulator + product.unit_price, 0);
       setSumProducts(Number(total.toFixed(2)));
     }
 
     setCartProductsLocalStorage();
   }, [cartProducts]);
+
 
   const setCartProductsLocalStorage = async () => {
     await AsyncStorage.setItem('cartProducts', JSON.stringify(cartProducts))
@@ -89,7 +69,6 @@ export default function ProductProvider({ children }: { children: React.ReactNod
     showToast('success', 'Sucesso!', 'Produto adicionado ao carrinho!');
   };
 
-
   const handleRemoveFromCart = async (productToRemove: Product) => {
     const filteredProducts = cartProducts.filter((product) => product.code !== productToRemove.code);
     setCartProducts(filteredProducts);
@@ -107,9 +86,9 @@ export default function ProductProvider({ children }: { children: React.ReactNod
           }
         });
 
-      if (response.status !== 200) { reject(()=>{
-        throw new Error("Não abra o modal");
-      }); }
+      if (response.status !== 200) {
+        reject(undefined);
+      }
 
       const products = response.data;
       setProducts(products);
