@@ -11,7 +11,7 @@ function NonAuthRouter() {
 
   return (
     <UserStackNavigator.Navigator
-      initialRouteName='Seja Bem Vindo!'
+      initialRouteName='Loading Screen'
     >
       <UserStackNavigator.Screen
         name="Loading Screen"

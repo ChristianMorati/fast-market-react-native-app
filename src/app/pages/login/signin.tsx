@@ -50,12 +50,16 @@ export default function SignIn() {
 
                 console.log(responseData);
                 const user = responseData;
+                const { access_token, ...userInfo } = user; 
+
                 if (user.access_token) {
+                    await AsyncStorage.setItem('@User', JSON.stringify(userInfo));
+                    auth.setUserInfo(userInfo);
+                    await AsyncStorage.setItem('TOKEN', responseData.access_token);
                     await productsContext.LoadProducts();
                     auth.setSignedIn(true);
                 }
-
-                await AsyncStorage.setItem('TOKEN', responseData.access_token);
+                
                 resolve(user);
             } catch (error) {
                 reject(undefined);

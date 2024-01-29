@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import { View, Text, StyleSheet, FlatList, Image, Pressable } from 'react-native';
 import { colors, globalStyles } from '../../../global-styles';
 import Product from '../../../models/productModel';
@@ -16,7 +16,6 @@ const ProductItem: React.FC<ProductItemProps> = ({ item }) => {
     const productContext = useProductContext();
 
     const leftAction = () => {
-
         return (
             <Pressable style={{
                 width: 50,
@@ -24,12 +23,11 @@ const ProductItem: React.FC<ProductItemProps> = ({ item }) => {
                 alignItems: 'center',
                 height: 'auto',
                 backgroundColor: 'red',
-                marginVertical: 1,
+                borderTopLeftRadius: 10,
+                borderBottomLeftRadius: 10,
+                marginBottom: 2,
             }}
-                onPress={() => {
-                    productContext.handleRemoveFromCart(item)
-                    console.log(item);
-                }}
+                onPress={() => { productContext.handleRemoveFromCart(item) }}
             >
                 <Text>
                     <Feather name="trash-2" size={24} color="white" />
@@ -39,7 +37,8 @@ const ProductItem: React.FC<ProductItemProps> = ({ item }) => {
     }
 
     return (
-        <Swipeable renderLeftActions={leftAction}>
+        <Swipeable
+            renderLeftActions={leftAction}>
             <View style={styles.productContainer}>
                 <View style={styles.descriptionContainer}>
                     <Image source={{ uri: item?.url_img }} style={[styles.image]} />
@@ -73,15 +72,15 @@ const CartProducts = () => {
             <View style={globalStyles.cartHeaderContainer}>
                 <Text style={styles.title} >Carrinho</Text>
                 <Text style={[
-                    productContext.cartProducts.length < 10 ? { color: colors.secondaryColor } : { color: 'red' }
-                , {
-                    fontWeight: 'bold',
-                }]}
+                    productContext.cartProducts?.length < 10 ? { color: colors.secondaryColor } : { color: 'white' }
+                    , {
+                        fontWeight: 'bold',
+                    }]}
                 >
-                    no carrinho: {productContext.cartProducts.length}</Text>
+                    no carrinho: {productContext.cartProducts?.length ?? 0}</Text>
                 <Text style={styles.simpleText}>máximo: 10</Text>
             </View>
-            {productContext.cartProducts.length == 0 ? (
+            {productContext.cartProducts?.length == 0 ? (
                 <View style={[styles.productContainer, { backgroundColor: colors.fiscalNoteColor }]}>
                     <Text style={{ fontWeight: '500', paddingVertical: 10 }}>Sem produtos.</Text>
                 </View>
@@ -119,14 +118,13 @@ const CartProducts = () => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        padding: 10,
         height: 'auto',
     },
     productContainer: {
         flexDirection: 'column',
         paddingHorizontal: 4,
-        marginVertical: 1,
         backgroundColor: colors.fiscalNoteColor,
+        marginBottom: 2,
     },
     finalPriceContainer: {
         marginVertical: 1,

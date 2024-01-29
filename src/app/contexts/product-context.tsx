@@ -34,8 +34,6 @@ export default function ProductProvider({ children }: { children: React.ReactNod
   const [product, setProduct] = useState<Product | undefined>(undefined);
   const [isLoadingProducts, setIsLoadingProducts] = useState<boolean>(true);
 
-  const auth = useAuth();
-
   useEffect(() => {
     getCartProductsLocalStorage();
   }, []);
@@ -60,12 +58,16 @@ export default function ProductProvider({ children }: { children: React.ReactNod
   };
 
   const handleAddProductToCart = async (newProduct: Product) => {
-    const productAlreadyExists = cartProducts.some((product) => product.code === newProduct.code);
-    if (productAlreadyExists) {
-      showToast('error', 'OPS!', 'Este produto já foi adicionado ao carrinho.');
-      return;
+    if (cartProducts) {
+      const productAlreadyExists = cartProducts.some((product) => product.code === newProduct.code);
+      if (productAlreadyExists) {
+        showToast('error', 'OPS!', 'Este produto já foi adicionado ao carrinho.');
+        return;
+      }
+      setCartProducts([...cartProducts, newProduct]);
+    } else {
+      setCartProducts([newProduct]);
     }
-    setCartProducts([...cartProducts, newProduct]);
     showToast('success', 'Sucesso!', 'Produto adicionado ao carrinho!');
   };
 

@@ -1,8 +1,8 @@
 import React from "react";
 import NonAuthRouter from "./nonAuth/non-auth-router";
-import AuthRouter from "./Auth/auth-router";
 import { useAuth } from "../contexts/auth-context";
-import { NavigationProp } from "@react-navigation/native";
+import { NavigationProp, useNavigation } from "@react-navigation/native";
+import AuthRouter from "./Auth/auth-router";
 
 type RootStackParamList = {
     Home: undefined,
@@ -16,6 +16,9 @@ export type NavigationType = NavigationProp<RootStackParamList>;
 export default function RootNavigator() {
     const auth = useAuth();
 
-    if (!auth.signedIn) return (<NonAuthRouter />);
-    if (auth.signedIn) return (<AuthRouter />);
-};
+    return (
+        <>
+            {!auth.signedIn ? (<NonAuthRouter />) : (< AuthRouter/>)}
+        </>
+    );
+}

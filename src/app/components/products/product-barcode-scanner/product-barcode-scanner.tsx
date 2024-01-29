@@ -64,6 +64,7 @@ const ProductBarCodeScanner: React.FC = () => {
 
   const defineProduct = async () => {
     const productSearched = await productContext.getProductByCode(code);
+    console.log(productSearched)
 
     if(!productSearched) {
       throw new Error("undefined");
@@ -84,9 +85,8 @@ const ProductBarCodeScanner: React.FC = () => {
     } catch (error) {
       setProductFoundedError('Produto não encontrado');
       setProductFounded(false);
-    } finally {
-      setIsLoadingProduct(false);
     }
+    setIsLoadingProduct(false);
   };
 
   useEffect(() => {
@@ -248,14 +248,11 @@ const styles = StyleSheet.create({
   },
   scannerArea: {
     backgroundColor: 'transparent',
-    padding: 10,
   },
   BarCodeScannerContainerStyle: {
     height: 300,
     borderRadius: 15,
     backgroundColor: 'black',
-    borderColor: 'green',
-    borderWidth: .5,
   },
   BarCodeScannerReScanButtonStyle: {
     padding: 12,
@@ -358,13 +355,13 @@ const styles = StyleSheet.create({
     elevation: 5,
   },
   containerInputCode: {
-    width: '100%',
-    marginVertical: 10,
     flexDirection: 'row',
-    justifyContent: 'center',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginVertical: 10,
   },
   inputInsertCode: {
-    width: '80%',
+    width: '85%',
     backgroundColor: '#7F8A7D',
     borderRadius: 10,
     padding: 10,
@@ -374,7 +371,6 @@ const styles = StyleSheet.create({
     shadowRadius: 2,
     elevation: 5,
     color: 'white',
-    marginRight: 8,
   },
 
   // MODAL

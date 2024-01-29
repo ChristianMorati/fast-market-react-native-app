@@ -45,11 +45,20 @@ export default function SignUp() {
                 throw new Error(`Signup failed with status: ${response.status}`);
             }
 
-            const data = await response.json();
-            await AsyncStorage.setItem('TOKEN', data.access_token);
-            await productsContext.LoadProducts();
-            auth.setSignedIn(true);
-            return data;
+            const responseData = await response.json();
+
+            console.log(responseData);
+            const user = responseData;
+            const { access_token, ...userInfo } = user; 
+
+            if (user.access_token) {
+                await AsyncStorage.setItem('@User', JSON.stringify(userInfo));
+                auth.setUserInfo(userInfo);
+                await AsyncStorage.setItem('TOKEN', responseData.access_token);
+                await productsContext.LoadProducts();
+                auth.setSignedIn(true);
+            }
+            return responseData;
         } catch (error) {
             console.error('Error during sign up:', error);
             throw new Error('Sign up failed');

@@ -26,15 +26,17 @@ const ProductItem: React.FC<ProductItemProps> = ({ item }) => {
                 <View style={styles.priceContainer}>
                     <Text style={styles.price}>{productContext.formatToCurrency(item?.unit_price)}</Text>
 
-                    {productContext.cartProducts.length < 9 ? (
+                    {productContext.cartProducts && productContext.cartProducts.length == 10 ? (
+                        <Text style={[globalStyles.button, styles.fullCart]}>
+                            <Ionicons name="md-cart-outline" size={14} color="white" />Cheio
+                        </Text>
+                    ) :
                         <TouchableOpacity
                             style={[globalStyles.button, styles.addToCart]}
                             onPress={() => productContext.handleAddProductToCart(item)}
                         >
                             <FontAwesome name="cart-arrow-down" size={16} color="white" />
-                        </TouchableOpacity>
-                    ) : <Text style={[globalStyles.button, styles.fullCart]}>
-                        <Ionicons name="md-cart-outline" size={14} color="white" /> Cheio</Text>}
+                        </TouchableOpacity>}
                 </View>
             </View>
         </View>
@@ -48,13 +50,11 @@ const FeaturedProducts: React.FC = () => {
         <View style={styles.container}>
             <View style={styles.container}>
                 <FlatList
-                    ListHeaderComponent={<Text h4 h4Style={{ color: 'white' }}>Produtos em Destaque</Text>}
                     data={productContext.products}
                     renderItem={({ item }) => (
                         <ProductItem item={item} />
                     )}
                     keyExtractor={(item) => item.code}
-                    contentContainerStyle={null}
                     numColumns={2}
                 />
             </View>
@@ -66,36 +66,28 @@ const FeaturedProducts: React.FC = () => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        paddingTop: 6,
         height: 'auto',
-        padding: 3,
     },
     image: {
         height: 140,
         resizeMode: 'contain',
         backgroundColor: 'white',
-        // borderTopRightRadius: 10,
-        // borderTopLeftRadius: 10,
+        borderTopRightRadius: 6,
+        borderTopLeftRadius: 6,
     },
     productContainer: {
         flex: 1,
         flexDirection: 'column',
         backgroundColor: colors.productFooter,
         borderColor: 'black',
+        justifyContent: 'space-between',
         margin: 2,
-        justifyContent: 'space-between'
-        // borderRadius: 10,
+        borderRadius: 6,
     },
     containerReload: {
         justifyContent: 'center',
         alignItems: 'center',
         marginTop: 16,
-    },
-    title: {
-        fontWeight: '500',
-        fontSize: 18,
-        color: colors.title,
-        paddingLeft: 4,
     },
     description: {
         fontSize: 11,
