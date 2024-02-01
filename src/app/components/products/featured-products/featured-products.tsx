@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import { View, Image, StyleSheet, TouchableOpacity, FlatList } from 'react-native';
 import { Text } from '@rneui/themed';
 import { colors, globalStyles } from '../../../global-styles';
@@ -7,6 +7,9 @@ import Ionicons from '@expo/vector-icons/Ionicons';
 import { FontAwesome } from '@expo/vector-icons';
 import { useProductContext } from '../../../contexts/product-context';
 
+import { Dimensions } from 'react-native';
+import Carousel from 'react-native-reanimated-carousel';
+
 
 interface ProductItemProps {
     item: Product;
@@ -14,6 +17,10 @@ interface ProductItemProps {
 
 const ProductItem: React.FC<ProductItemProps> = ({ item }) => {
     const productContext = useProductContext();
+
+    const price = productContext.formatToCurrency(item?.unit_price);
+    let [priceDezenas, priceCents] = price.slice(2).split(',');
+    priceCents = ',' + priceCents.slice();
 
     return (
         <View style={styles.productContainer}>
@@ -24,7 +31,11 @@ const ProductItem: React.FC<ProductItemProps> = ({ item }) => {
             <Text style={styles.description} numberOfLines={2} ellipsizeMode="tail">{item?.description.toUpperCase()}</Text>
             <View style={{}}>
                 <View style={styles.priceContainer}>
-                    <Text style={styles.price}>{productContext.formatToCurrency(item?.unit_price)}</Text>
+                    <Text style={[styles.price, { fontWeight: '500' }]}>
+                        R$
+                        <Text style={[styles.price, { fontSize: 18 }]}>{priceDezenas}</Text>
+                        {priceCents}
+                    </Text>
 
                     {productContext.cartProducts && productContext.cartProducts.length == 10 ? (
                         <Text style={[globalStyles.button, styles.fullCart]}>
@@ -43,25 +54,61 @@ const ProductItem: React.FC<ProductItemProps> = ({ item }) => {
     );
 };
 
-const FeaturedProducts: React.FC = () => {
+
+function Index() {
+    const width = Dimensions.get('window').width;
     const productContext = useProductContext();
+    const [currentIndex, setCurrentIndex] = useState(0);
 
     return (
-        <View style={styles.container}>
-            <View style={styles.container}>
-                <FlatList
-                    data={productContext.products}
-                    renderItem={({ item }) => (
+        <View style={{
+            flex: 1, justifyContent: 'center',
+            alignItems: 'start',
+        }}>
+            <Carousel
+                style={{ width: width }}
+                width={width / 2 - 10}
+                loop={false}
+                height={200}
+                autoPlay={false}
+                data={productContext?.products ?? []}
+                scrollAnimationDuration={200}
+                onSnapToItem={(index) => setCurrentIndex(index)}
+                renderItem={({ item, index }) => (
+                    <View
+                        style={{
+                            marginLeft: 10,
+                        }}
+                    >
                         <ProductItem item={item} />
-                    )}
-                    keyExtractor={(item) => item.code}
-                    numColumns={2}
-                />
+                    </View>
+                )}
+            />
+            <View style={{ flexDirection: 'row', justifyContent: 'center', marginVertical: 8 }}>
+                {productContext.products?.map((_, index) => (
+                    <View
+                        key={index}
+                        style={{
+                            width: 8,
+                            height: 8,
+                            borderRadius: 5,
+                            backgroundColor: index === currentIndex ? 'rgb(43, 117, 255)' : 'gray',
+                            marginHorizontal: 4,
+                        }}
+                    />
+                ))}
             </View>
         </View>
     );
-};
+}
 
+const width = Dimensions.get('window').width;
+
+const FeaturedProducts: React.FC = () => {
+    return (
+        <Index />
+    );
+}
 
 const styles = StyleSheet.create({
     container: {
@@ -69,31 +116,27 @@ const styles = StyleSheet.create({
         height: 'auto',
     },
     image: {
-        height: 140,
+        width: '100%',
+        height: width / 3,
         resizeMode: 'contain',
         backgroundColor: 'white',
-        borderTopRightRadius: 6,
         borderTopLeftRadius: 6,
+        borderTopRightRadius: 6,
     },
     productContainer: {
-        flex: 1,
-        flexDirection: 'column',
         backgroundColor: colors.productFooter,
         borderColor: 'black',
         justifyContent: 'space-between',
-        margin: 2,
+        height: '100%',
         borderRadius: 6,
-    },
-    containerReload: {
-        justifyContent: 'center',
-        alignItems: 'center',
-        marginTop: 16,
+        paddingBottom: 4,
     },
     description: {
         fontSize: 11,
         textAlign: 'center',
         paddingHorizontal: 2,
         fontWeight: '600',
+        color: 'lightgray'
     },
     priceContainer: {
         flexDirection: 'row',
@@ -104,6 +147,7 @@ const styles = StyleSheet.create({
     price: {
         fontSize: 14,
         fontWeight: 'bold',
+        color: 'lightgray'
     },
     disabledButton: {
         backgroundColor: 'black',

@@ -1,11 +1,8 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React from 'react';
 import { SectionList, SafeAreaView, StyleSheet, Text, View } from 'react-native';
 import FeaturedProducts from '../../components/products/featured-products/featured-products';
-import { colors } from '../../global-styles';
-import { useProductContext } from '../../contexts/product-context';
-import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import { Button } from '@rneui/base';
 import { useAuth } from '../../contexts/auth-context';
+import { colors } from '../../global-styles';
 
 
 function Home() {
@@ -13,19 +10,18 @@ function Home() {
   const sections = [
     {
       title: 'Featured Products', data: [
-        <>
-          <View style={{
-            marginBottom: 10,
-            backgroundColor: 'white',
-            borderRadius: 8,
-            padding: 16,
-          }}>
-            <Text>{auth.userInfo?.username}</Text>
-            <Text>{auth.userInfo?.name}</Text>
-            <Text>CPF: {auth.userInfo?.cpf}</Text>
-          </View>
-        </>]
-    },
+        <View style={{
+          marginBottom: 10,
+          backgroundColor: 'white',
+          borderRadius: 8,
+          padding: 16,
+          margin: 10,
+        }}>
+          <Text style={{ color: '#1e1e1e' }} >Email: {auth.userInfo?.username}</Text>
+          <Text style={{ color: '#1e1e1e' }} >Nome: {auth.userInfo?.name}</Text>
+          <Text style={{ color: '#1e1e1e' }} >CPF: {auth.userInfo?.cpf}</Text>
+        </View>
+  ]},
     {
       title: 'Featured Products', data: [<FeaturedProducts />]
     },
@@ -33,13 +29,11 @@ function Home() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <GestureHandlerRootView>
-        <SectionList
-          style={{}}
-          sections={sections}
-          renderItem={({ item }) => item}
-        />
-      </GestureHandlerRootView>
+      <SectionList
+        style={{ height: 'auto' }}
+        sections={sections}
+        renderItem={({ item }) => item}
+      />
     </SafeAreaView>
   );
 }
@@ -48,7 +42,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: colors.mainAppColor,
-    padding: 10,
   },
 });
 

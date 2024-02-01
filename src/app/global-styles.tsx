@@ -7,10 +7,10 @@ export const colors = {
     mainColor: '#B84AB5',
     secondaryColor: '#24D906',
     fiscalNoteColor: 'white',
-    // fiscalNoteColor: '#E0E5BC',
     mainAppColor: temp,
     title: 'white',
-    productFooter: '#F8BFF6',
+    // productFooter: '#F8BFF6',
+    productFooter: '#2e2e2e',
 }
 
 export const globalStyles = StyleSheet.create({

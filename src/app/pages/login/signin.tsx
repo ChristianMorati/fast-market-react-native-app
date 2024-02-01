@@ -111,7 +111,7 @@ export default function SignIn() {
                     onPress={() => signIn()}
                 />
                 <Button
-                    title="Já tenho conta"
+                    title="Criar uma nova conta"
                     loading={false}
                     buttonStyle={{
                         backgroundColor: 'transparent',

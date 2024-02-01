@@ -9,7 +9,7 @@ import Payment from "../../pages/payment/payment";
 import { Button, Image } from "@rneui/base";
 import Home from "../../pages/home/home";
 import { useNavigation } from "@react-navigation/native";
-import LogOff from "../../pages/logoff/logoff";
+import Settings from "../../pages/settings/settings";
 
 const Tab = createBottomTabNavigator();
 const Drawer = createDrawerNavigator();
@@ -24,7 +24,6 @@ function ProductStack() {
         name="Ìr as compras"
         component={Products}
         options={{
-          title: "",
           headerShown: false
         }}
       />
@@ -120,35 +119,36 @@ const screenOptionStyle = {
 
 const AuthRouter = () => {
   const navigation = useNavigation();
-  
+
   return (
     <Drawer.Navigator
-    screenOptions={{
-      ...screenOptionStyle,
-      drawerStyle: {
-        backgroundColor: 'black'
-      }
-    }}
-    initialRouteName="Fast Market"
+      screenOptions={{
+        ...screenOptionStyle,
+        drawerStyle: {
+          backgroundColor: 'black'
+        }
+      }}
+      initialRouteName="Fast Market"
     >
       <Drawer.Screen
         name="Fast Market"
         component={BottomTabs}
         options={{
           drawerLabel: ({ focused, color }) => (
-              <Text style={{ fontWeight: '500', color: focused ? 'white' : 'lightgray'}}>Fast Market</Text>
+            <Text style={{ fontWeight: '500', color: focused ? 'white' : 'gray' }}>Fast Market</Text>
           ),
-          drawerActiveBackgroundColor: 'rgba(5, 51, 255, 1)',
+          drawerActiveBackgroundColor: 'rgb(43, 117, 255)',
         }}
       />
       <Drawer.Screen
-        name="LogOff"
-        component={LogOff}
+        name="Settings"
+        component={Settings}
         options={{
+          title: "Configurações",
           drawerLabel: ({ focused, color }) => (
-              <Text style={{ fontWeight: '500', color: focused ? 'white' : 'lightgray'}}>Configurações</Text>
+            <Text style={{ fontWeight: '500', color: focused ? 'white' : 'gray' }}>Configurações</Text>
           ),
-          drawerActiveBackgroundColor: 'rgba(5, 51, 255, 1)',
+          drawerActiveBackgroundColor: 'rgb(43, 117, 255)',
         }}
       />
     </Drawer.Navigator>
