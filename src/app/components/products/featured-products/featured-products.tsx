@@ -55,25 +55,34 @@ const ProductItem: React.FC<ProductItemProps> = ({ item }) => {
 };
 
 
-function Index() {
+type IndexProps = {
+    autoplay: boolean,
+    scrollAnimationDuration: number
+}
+
+function Index({ autoplay, scrollAnimationDuration }: IndexProps) {
     const width = Dimensions.get('window').width;
     const productContext = useProductContext();
     const [currentIndex, setCurrentIndex] = useState(0);
 
     return (
-        <View style={{
-            flex: 1, justifyContent: 'center',
-            alignItems: 'start',
-        }}>
+        <View style={{ paddingVertical: 6, }}>
             <Carousel
                 style={{ width: width }}
                 width={width / 2 - 10}
-                loop={false}
+                loop={true}
                 height={200}
-                autoPlay={false}
+                autoPlay={autoplay}
                 data={productContext?.products ?? []}
-                scrollAnimationDuration={200}
-                onSnapToItem={(index) => setCurrentIndex(index)}
+                scrollAnimationDuration={scrollAnimationDuration}
+                onSnapToItem={(index) => {
+                    setCurrentIndex(index);
+                    //     if (currentIndex === productContext?.products?.length - 1) {
+                    //         setTimeout(() => {
+
+                    //         }, 10000);
+                    //     }
+                }}
                 renderItem={({ item, index }) => (
                     <View
                         style={{
@@ -106,7 +115,10 @@ const width = Dimensions.get('window').width;
 
 const FeaturedProducts: React.FC = () => {
     return (
-        <Index />
+        <>
+            <Index scrollAnimationDuration={200} autoplay={false} />
+        </>
+
     );
 }
 
