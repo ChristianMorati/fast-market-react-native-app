@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useRef, useState } from 'react';
+import React, { useState } from 'react';
 import { View, Image, StyleSheet, TouchableOpacity, FlatList } from 'react-native';
 import { Text } from '@rneui/themed';
 import { colors, globalStyles } from '../../../global-styles';
@@ -9,7 +9,9 @@ import { useProductContext } from '../../../contexts/product-context';
 
 import { Dimensions } from 'react-native';
 import Carousel from 'react-native-reanimated-carousel';
-
+import { useDispatch } from 'react-redux';
+import { useAppSelector } from '../../../store/hooks/useAppSelector';
+import { addProductToCart } from '../../../store/cart/actions'
 
 interface ProductItemProps {
     item: Product;
@@ -17,6 +19,9 @@ interface ProductItemProps {
 
 const ProductItem: React.FC<ProductItemProps> = ({ item }) => {
     const productContext = useProductContext();
+
+    const { cartLength, cartProducts } = useAppSelector((store) => store.cart)
+    const dispatch = useDispatch();
 
     const price = productContext.formatToCurrency(item?.unit_price);
     let [priceDezenas, priceCents] = price.slice(2).split(',');
@@ -37,17 +42,26 @@ const ProductItem: React.FC<ProductItemProps> = ({ item }) => {
                         {priceCents}
                     </Text>
 
-                    {productContext.cartProducts && productContext.cartProducts.length == 10 ? (
-                        <Text style={[globalStyles.button, styles.fullCart]}>
-                            <Ionicons name="md-cart-outline" size={14} color="white" />Cheio
-                        </Text>
-                    ) :
-                        <TouchableOpacity
-                            style={[globalStyles.button, styles.addToCart]}
-                            onPress={() => productContext.handleAddProductToCart(item)}
-                        >
-                            <FontAwesome name="cart-arrow-down" size={16} color="white" />
-                        </TouchableOpacity>}
+                    {item.description.split(' ').includes("KG") ? (
+                        <Text></Text> // Render something specific for products containing "KG"
+                    ) : (
+                        <>
+                            {/* Render either the full cart button or add-to-cart button based on conditions */}
+                            {cartProducts && cartLength == 10 ? (
+                                <Text style={[globalStyles.button, styles.fullCart]}>
+                                    <Ionicons name="md-cart-outline" size={14} color="white" />
+                                    Cheio
+                                </Text>
+                            ) : (
+                                <TouchableOpacity
+                                    style={[globalStyles.button, styles.addToCart]}
+                                    onPress={() => dispatch(addProductToCart(item))}
+                                >
+                                    <FontAwesome name="cart-arrow-down" size={16} color="white" />
+                                </TouchableOpacity>
+                            )}
+                        </>
+                    )}
                 </View>
             </View>
         </View>

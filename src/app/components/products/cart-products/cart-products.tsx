@@ -1,18 +1,23 @@
-import React, { useRef } from 'react';
+import React from 'react';
 import { View, Text, StyleSheet, FlatList, Image, Pressable } from 'react-native';
 import { colors, globalStyles } from '../../../global-styles';
-import Product from '../../../models/productModel';
 import { Feather } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import { useProductContext } from '../../../contexts/product-context';
 import { Swipeable } from 'react-native-gesture-handler';
 import { NavigationType } from '../../../router/root-navigator';
+import { useDispatch } from 'react-redux';
+import { removeProductFromCart } from '../../../store/cart/actions'
+import { useAppSelector } from '../../../store/hooks/useAppSelector';
+import { CartItem } from '../../../store/cart/initialState';
+
 
 interface ProductItemProps {
-    item: Product;
+    item: CartItem;
 }
 
 const ProductItem: React.FC<ProductItemProps> = ({ item }) => {
+    const dispatch = useDispatch();
     const productContext = useProductContext();
 
     const leftAction = () => {
@@ -27,7 +32,9 @@ const ProductItem: React.FC<ProductItemProps> = ({ item }) => {
                 borderBottomLeftRadius: 10,
                 marginBottom: 2,
             }}
-                onPress={() => { productContext.handleRemoveFromCart(item) }}
+                onPress={() => {
+                    dispatch(removeProductFromCart(item));
+                }}
             >
                 <Text>
                     <Feather name="trash-2" size={24} color="white" />
@@ -43,6 +50,19 @@ const ProductItem: React.FC<ProductItemProps> = ({ item }) => {
                 <View style={styles.descriptionContainer}>
                     <Image source={{ uri: item?.url_img }} style={[styles.image]} />
                     <Text style={styles.description} numberOfLines={1} ellipsizeMode="tail">{item?.description.toUpperCase()}</Text>
+                    <Text style={{
+                        backgroundColor: '#0077ff',
+                        borderWidth: 1,
+                        paddingHorizontal: 10,
+                        borderColor: 'white',
+                        textAlign: 'center',
+                        alignContent: 'center',
+                        position: 'absolute',
+                        top: 1,
+                        left: -2,
+                        color: 'white',
+                        fontWeight: 'bold',
+                    }}>{item.quantity}</Text>
                 </View>
                 <View style={[styles.descriptionContainer, {
                     borderTopWidth: 1,
@@ -50,12 +70,14 @@ const ProductItem: React.FC<ProductItemProps> = ({ item }) => {
                     justifyContent: 'space-between',
                     paddingHorizontal: 3,
                 }]}>
-                    <Text></Text>
+                    <Text style={styles.description}>{`${item.quantity} * ${productContext.formatToCurrency(item?.unit_price)}`}</Text>
                     <Text style={{
                         textAlign: 'right',
                         fontWeight: 'bold',
                         color: 'green',
-                    }} numberOfLines={1} ellipsizeMode="middle">{productContext.formatToCurrency(item?.unit_price)}</Text>
+                    }} numberOfLines={1} ellipsizeMode="middle">
+                        {`${productContext.formatToCurrency(item.quantity * item?.unit_price)}` }
+                    </Text>
                 </View>
             </View>
         </Swipeable>
@@ -65,6 +87,7 @@ const ProductItem: React.FC<ProductItemProps> = ({ item }) => {
 const CartProducts = () => {
     const productContext = useProductContext();
     const navigation: NavigationType = useNavigation();
+    const { cartSum, cartLength, cartProducts } = useAppSelector((store) => store.cart)
 
     return (
         <View style={styles.container}>
@@ -72,22 +95,22 @@ const CartProducts = () => {
             <View style={globalStyles.cartHeaderContainer}>
                 <Text style={styles.title} >Carrinho</Text>
                 <Text style={[
-                    productContext.cartProducts?.length < 10 ? { color: colors.secondaryColor } : { color: 'white' }
+                    cartLength < 10 ? { color: colors.secondaryColor } : { color: 'white' }
                     , {
                         fontWeight: 'bold',
                     }]}
                 >
-                    no carrinho: {productContext.cartProducts?.length ?? 0}</Text>
+                    no carrinho: {cartLength ?? 0}</Text>
                 <Text style={styles.simpleText}>máximo: 10</Text>
             </View>
-            {productContext.cartProducts?.length == 0 ? (
+            {cartLength == 0 ? (
                 <View style={[styles.productContainer, { backgroundColor: colors.fiscalNoteColor }]}>
                     <Text style={{ fontWeight: '500', paddingVertical: 10 }}>Sem produtos.</Text>
                 </View>
             ) : (
                 <View>
                     <FlatList
-                        data={productContext.cartProducts}
+                        data={cartProducts}
                         renderItem={({ item }) => (<ProductItem item={item} />)}
                         keyExtractor={(item) => item.code}
                         contentContainerStyle={styles.flatListContent}
@@ -95,7 +118,7 @@ const CartProducts = () => {
                     <View>
                         <View style={[styles.finalPriceContainer, styles.priceContainer]}>
                             <Text style={styles.finalPrice}>TOTAL:</Text>
-                            <Text style={styles.finalPrice}>{productContext.formatToCurrency(productContext.sumProducts)}</Text>
+                            <Text style={styles.finalPrice}>{productContext.formatToCurrency(cartSum)}</Text>
                         </View>
                     </View>
                     <View style={styles.containerFinalizar}>
@@ -121,6 +144,7 @@ const styles = StyleSheet.create({
         height: 'auto',
     },
     productContainer: {
+        width: '100%',
         flexDirection: 'column',
         paddingHorizontal: 4,
         backgroundColor: colors.fiscalNoteColor,
@@ -171,7 +195,7 @@ const styles = StyleSheet.create({
     },
     image: {
         width: 50,
-        height: 50,
+        height: 80,
         resizeMode: 'contain',
         marginBottom: 8,
         marginRight: 2,

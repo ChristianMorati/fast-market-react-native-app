@@ -3,13 +3,13 @@ import { Text } from "react-native";
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { useProductContext } from "../../contexts/product-context";
 import Products from "../../pages/products/products";
 import Payment from "../../pages/payment/payment";
-import { Button, Image } from "@rneui/base";
+import { Image } from "@rneui/base";
 import Home from "../../pages/home/home";
 import { useNavigation } from "@react-navigation/native";
 import Settings from "../../pages/settings/settings";
+import { useAppSelector } from "../../store/hooks/useAppSelector";
 
 const Tab = createBottomTabNavigator();
 const Drawer = createDrawerNavigator();
@@ -38,7 +38,7 @@ function ProductStack() {
 };
 
 function BottomTabs() {
-  const productContext = useProductContext();
+  const { cartLength, cartProducts } = useAppSelector((store) => store.cart);
 
   return (
     <Tab.Navigator
@@ -84,7 +84,7 @@ function BottomTabs() {
         options={
           {
             headerShown: false,
-            tabBarBadge: productContext.cartProducts?.length ?? 0,
+            tabBarBadge: cartLength == 0 ? undefined : cartLength,
             tabBarBadgeStyle: {
               backgroundColor: 'red'
             },
@@ -111,7 +111,7 @@ function BottomTabs() {
 
 const screenOptionStyle = {
   headerStyle: {
-    backgroundColor: "black", /* For browsers that do not support gradients */
+    backgroundColor: "black",
   },
   headerTintColor: "white",
   headerBackTitle: "black",

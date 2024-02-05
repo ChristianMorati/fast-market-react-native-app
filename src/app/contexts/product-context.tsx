@@ -5,21 +5,18 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import { BASE_URL_API } from '../../../config';
 import { useAuth } from './auth-context';
+import { CartItem } from '../store/cart/initialState';
 
 interface ProductContextProps {
   isLoadingProducts: boolean;
   setIsLoadingProducts: React.Dispatch<React.SetStateAction<boolean>>;
   sumProducts: number;
   cartProducts: Product[];
-  product: Product | undefined;
   products: Product[] | undefined;
-  setProduct: React.Dispatch<React.SetStateAction<Product | undefined>>;
   setProducts: React.Dispatch<React.SetStateAction<Product[] | undefined>>;
   LoadProducts: () => Promise<Product[] | undefined>;
-  getProductByCode: (code: string) => Promise<Product | undefined>;
+  getProductByCode: (code: string) => Promise<CartItem | undefined>;
   showToast: (type: 'success' | 'error', text1: string, text2: string) => void;
-  handleAddProductToCart: (newProduct: Product) => void;
-  handleRemoveFromCart: (toRemoveProduct: Product) => void;
   formatToCurrency: (value: number) => string;
 }
 
@@ -57,26 +54,6 @@ export default function ProductProvider({ children }: { children: React.ReactNod
     setCartProducts(JSON.parse(alreadyAdded!));
   };
 
-  const handleAddProductToCart = async (newProduct: Product) => {
-    if (cartProducts) {
-      const productAlreadyExists = cartProducts.some((product) => product.code === newProduct.code);
-      if (productAlreadyExists) {
-        showToast('error', 'OPS!', 'Este produto já foi adicionado ao carrinho.');
-        return;
-      }
-      setCartProducts([...cartProducts, newProduct]);
-    } else {
-      setCartProducts([newProduct]);
-    }
-    showToast('success', 'Sucesso!', 'Produto adicionado ao carrinho!');
-  };
-
-  const handleRemoveFromCart = async (productToRemove: Product) => {
-    const filteredProducts = cartProducts.filter((product) => product.code !== productToRemove.code);
-    setCartProducts(filteredProducts);
-    showToast('success', 'Sucesso!', 'Produto removido do carrinho!');
-  };
-
   const LoadProducts = async (): Promise<Product[] | undefined> => {
     return new Promise(async (resolve, reject) => {
       const token = await AsyncStorage.getItem('TOKEN');
@@ -98,7 +75,7 @@ export default function ProductProvider({ children }: { children: React.ReactNod
     });
   };
 
-  const getProductByCode = async (code: string): Promise<Product | undefined> => {
+  const getProductByCode = async (code: string): Promise<CartItem | undefined> => {
     return new Promise(async (resolve, reject) => {
       const token = await AsyncStorage.getItem('TOKEN');
       const response = await axios.get(`${BaseUrlApi}/code/${code}`,
@@ -145,15 +122,11 @@ export default function ProductProvider({ children }: { children: React.ReactNod
       setIsLoadingProducts,
       sumProducts,
       cartProducts,
-      product,
-      setProduct,
       products,
       setProducts,
       getProductByCode,
       LoadProducts,
       showToast,
-      handleAddProductToCart,
-      handleRemoveFromCart,
       formatToCurrency,
     }}>
       {children}

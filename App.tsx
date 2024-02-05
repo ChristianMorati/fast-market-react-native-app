@@ -12,6 +12,8 @@ import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { BASE_URL_API, STRIPE_KEY } from './config';
 import RootNavigator, { NavigationType } from './src/app/router/root-navigator';
+import { store } from './src/app/store';
+import { Provider } from 'react-redux';
 
 function App() {
   const STYLES = ['default', 'dark-content', 'light-content'] as const;
@@ -66,7 +68,9 @@ function App() {
           <PaymentProvider>
             <ProductProvider>
               <AuthProvider>
-                <RootNavigator />
+                <Provider store={store}>
+                  <RootNavigator />
+                </ Provider>
               </AuthProvider>
             </ProductProvider>
           </PaymentProvider>
