@@ -2,5 +2,7 @@ import { cartSlice } from "./slice";
 
 export const {
     addProductToCart,
-    removeProductFromCart
+    removeProductFromCart,
+    decrement,
+    increment,
 } = cartSlice.actions;

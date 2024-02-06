@@ -55,7 +55,7 @@ const ProductItem: React.FC<ProductItemProps> = ({ item }) => {
                             ) : (
                                 <TouchableOpacity
                                     style={[globalStyles.button, styles.addToCart]}
-                                    onPress={() => dispatch(addProductToCart(item))}
+                                    onPress={() => dispatch(addProductToCart({...item, quantity: 1}))}
                                 >
                                     <FontAwesome name="cart-arrow-down" size={16} color="white" />
                                 </TouchableOpacity>

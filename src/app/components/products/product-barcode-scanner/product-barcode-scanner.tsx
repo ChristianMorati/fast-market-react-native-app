@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, StyleSheet, TouchableOpacity, TextInput, Modal, Pressable, Image } from 'react-native';
+import { View, StyleSheet, TouchableOpacity, TextInput, Modal, Pressable, Image, Alert } from 'react-native';
 import { colors } from '../../../global-styles';
 import { Feather, MaterialCommunityIcons } from '@expo/vector-icons';
 import Scanner from '../../scanner/scanner';
@@ -7,22 +7,25 @@ import { useProductContext } from '../../../contexts/product-context';
 import { AntDesign } from '@expo/vector-icons';
 import { useRef } from 'react';
 import { Button, Text } from '@rneui/themed';
-import { useFocusEffect, useIsFocused } from '@react-navigation/native';
+import { useFocusEffect, useIsFocused, useNavigation } from '@react-navigation/native';
 import { useAppSelector } from '../../../store/hooks/useAppSelector';
 import { useDispatch } from 'react-redux';
-import { addProductToCart } from '../../../store/cart/actions';
+import { addProductToCart, increment, decrement } from '../../../store/cart/actions';
 import { CartItem } from '../../../store/cart/initialState';
+import AlertModal from './modal';
 
 const ProductBarCodeScanner: React.FC = () => {
   const dispatch = useDispatch();
   const productContext = useProductContext();
   const { cartLength, cartProducts } = useAppSelector((store) => store.cart);
+
   const canAdd = 10 - cartLength;
 
   const isFocused = useIsFocused();
+  const navigation = useNavigation();
 
-  const [type, setType] = React.useState<string>('')
-  const [data, setData] = React.useState<string>('')
+  const [type, setType] = React.useState<string>('');
+  const [data, setData] = React.useState<string>('');
   const [scannerActive, setScannerActive] = React.useState(false);
   const [code, setCode] = React.useState('');
 
@@ -44,9 +47,20 @@ const ProductBarCodeScanner: React.FC = () => {
     }, [])
   );
 
-  const [quantity, setQuantity] = useState(0);
-
   const onCodeScanned = (type: string, data: string) => {
+    if (canAdd === 0) {
+      return Alert.alert(
+        'Eba!',
+        `O carrinho está cheio!\nVocê está pronto para seguir para o pagamento!`,
+        [
+          {
+            text: 'OK',
+            onPress: () => navigation.navigate('Pagamento'),
+          },
+        ],
+      );
+    }
+
     if (!modalVisible) {
       if (type == "256") {
         let productObj = JSON.parse(data);
@@ -54,7 +68,6 @@ const ProductBarCodeScanner: React.FC = () => {
         setProduct(productObj);
         setProductFounded(true);
         setModalVisible(true);
-        setQuantity(productObj.quantity);
         return;
       }
       setType(type);
@@ -67,14 +80,13 @@ const ProductBarCodeScanner: React.FC = () => {
     setType('');
     setData('');
     setCode('');
-    setQuantity(0);
     setProductFounded(false);
-    setProduct(undefined)
-    setProductFoundedError('')
+    setProduct(undefined);
+    setProductFoundedError('');
   }
 
   const handleInputChange = (text: string) => {
-    setProductFoundedError('')
+    setProductFoundedError('');
     return setCode(text);
   };
 
@@ -85,7 +97,7 @@ const ProductBarCodeScanner: React.FC = () => {
 
   const defineProduct = async () => {
     const productSearched = await productContext.getProductByCode(code);
-    console.log(productSearched)
+    console.log(productSearched);
 
     if (!productSearched) {
       throw new Error("undefined");
@@ -112,27 +124,42 @@ const ProductBarCodeScanner: React.FC = () => {
 
   useEffect(() => {
     if (code.length === 8 && canAdd === 0) {
-      return productContext.showToast('error', "Falha", "O carrinho já está cheio!")
+      // return productContext.showToast('error', "Opss...", "Carrinho cheio!");
+      return Alert.alert(
+        'Eba!',
+        `O carrinho está cheio!\nVocê está pronto para seguir para o pagamento!`,
+        [
+          {
+            text: 'OK',
+            onPress: () => navigation.navigate('Pagamento'),
+          },
+        ],
+      );
     }
 
     if (code.length === 8 && canAdd >= 1) {
-      searchForProduct()
+      searchForProduct();
       return;
     }
     setProductFounded(false);
   }, [code]);
 
-  function AddButton() {
-    const increment = () => setQuantity((state) => (canAdd >= 1 && state < canAdd) ? state + 1 : state)
-    const decrement = () => setQuantity((state) => state > 1 ? state - 1 : state)
+  type AddButtonProps = {
+    quantity: number,
+    decrement: () => void,
+    increment: () => void,
+  }
 
+  function AddButton({ quantity, decrement, increment }: AddButtonProps) {
     return (
       <>
         <View style={{
           justifyContent: 'center',
           alignItems: 'center',
         }}>
-          <Text style={{ textAlign: 'center', borderRadius: 3, marginVertical: 4, paddingHorizontal: 5, backgroundColor: 'lightgray' }}>{quantity}</Text>
+          <Text style={{ textAlign: 'center', borderRadius: 3, marginVertical: 4, paddingHorizontal: 5, backgroundColor: 'lightgray' }}>
+            {product?.quantity ?? quantity}
+          </Text>
         </View>
         <View style={{
           flexDirection: 'row',
@@ -148,7 +175,7 @@ const ProductBarCodeScanner: React.FC = () => {
             style={styles.centerButton}
             onPress={() => {
               if (!product) return;
-              if (quantity === 0) return;
+              if (canAdd === 0) return;
               dispatch(addProductToCart({ ...product, quantity: quantity }));
               onCloseModal();
             }}>
@@ -165,6 +192,27 @@ const ProductBarCodeScanner: React.FC = () => {
   }
 
   const ProductModal = () => {
+    const [quantity, setQuantity] = useState(1);
+
+    const increment = () => setQuantity((state) => {
+      if (canAdd >= 1 && state < canAdd) {
+        return state + 1;
+      }
+      Alert.alert(
+        'Opss..!',
+        `Você só pode adicionar mais ${canAdd} item${canAdd > 1 ? 's' : ''}!\nItens no carrinho: ${cartLength}`,
+        [
+          {
+            text: 'OK',
+            onPress: () => console.log('OK Pressed'),
+          },
+        ],
+      );
+
+      return state;
+    });
+    const decrement = () => setQuantity((state) => state > 1 ? state - 1 : state);
+
     return (
       <View style={styles.centeredView}>
         <Modal
@@ -212,7 +260,7 @@ const ProductBarCodeScanner: React.FC = () => {
                   (
                     <Text
                       style={[styles.price, { alignSelf: 'flex-start', color: 'lightgreen' }]}>
-                      Total: {`${quantity} * ${product?.unit_price} = ${productContext.formatToCurrency(quantity * product!.unit_price)}`}
+                      {`${quantity} * ${product?.unit_price}\nTotal = ${productContext.formatToCurrency(quantity * product!.unit_price)}`}
                     </Text>
                   )
                 }
@@ -224,14 +272,14 @@ const ProductBarCodeScanner: React.FC = () => {
                       style={styles.centerButton}
                       onPress={() => {
                         if (!product) return;
-                        dispatch(addProductToCart({...product, quantity: product.quantity ? product.quantity: 1}));
+                        dispatch(addProductToCart({ ...product, quantity: product.quantity ? product.quantity : 1 }));
                         onCloseModal();
                       }}
                     >
                       <Text style={styles.buttonText}>{"Adicionar"}</Text>
                     </TouchableOpacity>
                   ) : (
-                    <AddButton />
+                    <AddButton quantity={quantity} decrement={decrement} increment={increment} />
                   )}
 
                 </View>
@@ -254,6 +302,8 @@ const ProductBarCodeScanner: React.FC = () => {
 
   return (
     <View style={styles.container}>
+      {cartLength === 10 && (<AlertModal cta={() => navigation.navigate('Pagamento')}/>)}
+
       <View style={styles.scannerArea}>
 
         {scannerActive && isFocused && (

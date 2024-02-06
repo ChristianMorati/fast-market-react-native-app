@@ -76,7 +76,7 @@ const ProductItem: React.FC<ProductItemProps> = ({ item }) => {
                         fontWeight: 'bold',
                         color: 'green',
                     }} numberOfLines={1} ellipsizeMode="middle">
-                        {`${productContext.formatToCurrency(item.quantity * item?.unit_price)}` }
+                        {`${productContext.formatToCurrency(item.quantity * item?.unit_price)}`}
                     </Text>
                 </View>
             </View>
@@ -112,7 +112,7 @@ const CartProducts = () => {
                     <FlatList
                         data={cartProducts}
                         renderItem={({ item }) => (<ProductItem item={item} />)}
-                        keyExtractor={(item) => item.code}
+                        keyExtractor={(item, index) => index.toString()} // Use o índice como chave
                         contentContainerStyle={styles.flatListContent}
                     />
                     <View>

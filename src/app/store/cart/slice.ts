@@ -20,6 +20,17 @@ export const cartSlice = createSlice({
     name: 'cart',
     initialState,
     reducers: {
+        increment(state) {
+            const canAdd = 10 - state.cartLength;
+            if (canAdd >= 1 && state.itemsYouCanAdd < canAdd) {
+                state.itemsYouCanAdd += 1;
+            }
+        },
+        decrement(state) {
+            if (state.itemsYouCanAdd > 1) {
+                state.itemsYouCanAdd -= 1;
+            }
+        },
         addProductToCart: (state: CartState, action: PayloadAction<CartItem>) => {
             const cartLength = calculateCartLength(state.cartProducts)
 
@@ -30,30 +41,28 @@ export const cartSlice = createSlice({
             const productDescription = action.payload.description;
             const isKGProduct = productDescription.split(" ").includes("KG");
 
+            const itemsToAdd = action.payload?.quantity ?? 1;
+            const productIndex = state.cartProducts.findIndex((product: CartItem) => product.code === action.payload.code);
+
             if (isKGProduct) {
-                const productIndex = state.cartProducts.findIndex((product: CartItem) => product.code === action.payload.code);
-                if (productIndex === -1) {
-                    state.cartProducts.push({
-                        ...action.payload,
-                    });
-                    state.cartLength = calculateCartLength(state.cartProducts);
-                    state.cartSum = calculateCartSum(state.cartProducts);
-                    return;
-                } else {
-                    console.log('in cart ja');
-                    return;
-                }
+                state.cartProducts.push({
+                    ...action.payload,
+                    quantity: itemsToAdd,
+                });
+
+                state.cartLength = calculateCartLength(state.cartProducts);
+                state.cartSum = calculateCartSum(state.cartProducts);
+                return;
             };
 
-            //{"id": 8,"code": "12345675","description": "PÃO FRANCÊS KG","unit_price": 16.00,"url_img": "https://www.jauserve.com.br/dw/image/v2/BFJL_PRD/on/demandware.static/-/Sites-jauserve-master/default/dwfc43c8bb/7150.png?sw=1800","quantity": 1.4}
-
+            /* 
+                https://barcode.tec-it.com/en/QRCode?data=%7B%22id%22%3A%208%2C%22code%22%3A%20%2212345675%22%2C%22description%22%3A%20%22P%C3%83O%20FRANC%C3%8AS%20KG%22%2C%22unit_price%22%3A%2016.00%2C%22url_img%22%3A%20%22https%3A%2F%2Fwww.jauserve.com.br%2Fdw%2Fimage%2Fv2%2FBFJL_PRD%2Fon%2Fdemandware.static%2F-%2FSites-jauserve-master%2Fdefault%2Fdwfc43c8bb%2F7150.png%3Fsw%3D1800%22%2C%22quantity%22%3A%201.2%7D
+            */
+           
             // IS UN
-            const itemsToAdd = action.payload?.quantity ?? 1;
             const canAdd = (itemsToAdd + cartLength) <= 10;
 
             if (!canAdd) return console.log('cart full');
-
-            const productIndex = state.cartProducts.findIndex((product: CartItem) => product.code === action.payload.code);
 
             if (productIndex !== -1) {
                 state.cartProducts[productIndex].quantity += itemsToAdd
@@ -83,7 +92,11 @@ export const cartSlice = createSlice({
 
             state.cartLength = calculateCartLength(state.cartProducts);
             state.cartSum = calculateCartSum(state.cartProducts);
-            console.log(state.cartProducts);
         },
+    },
+    extraReducers: (builder) => {
+        builder.addCase('resetCartSlice', (state, action) => {
+            return initialState;
+        });
     },
 });

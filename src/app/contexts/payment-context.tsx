@@ -1,5 +1,4 @@
 import React, { Dispatch, ReactNode, SetStateAction, createContext, useState } from 'react';
-import { useProductContext } from './product-context';
 import { useStripe } from '@stripe/stripe-react-native';
 import { Alert } from 'react-native';
 import { BASE_URL_API } from '../../../config';
@@ -23,14 +22,12 @@ export const PaymentContext = createContext<PaymentContextProps>({} as PaymentCo
 export default function PaymentProvider({ children }: { children: ReactNode }) {
   const [paymentIntent, setPaymentIntent] = useState<Intent | undefined>(undefined);
 
-  const productContext = useProductContext()
   const { initPaymentSheet, presentPaymentSheet } = useStripe();
   const navigation = useNavigation();
 
   const makePaymentIntent = async (Amount: number): Promise<Intent | undefined> => {
     try {
       const token = await AsyncStorage.getItem('TOKEN');
-
       const response = await axios.post(`${BASE_URL_API}/payment/intent`,
         {
           amount: Amount,
@@ -81,6 +78,8 @@ export default function PaymentProvider({ children }: { children: ReactNode }) {
     } catch (error) {
       return Alert.alert("try catch error");
     }
+
+    navigation.navigate('Home');
     // register on db a transaction
   };
 
