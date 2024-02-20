@@ -1,21 +1,9 @@
-export type CartItem = {
-    id: number;
-    code: string;
-    description: string;
-    unit_price: number;
-    price: number;
-    url_img: string;
-    quantity: number;
-};
+import { User } from "../../types/user";
+import { IUserProps } from "./interfaces/IUserProps";
 
-export interface CartState {
-    cartProducts: CartItem[];
-    cartLength: number;
-    cartSum: number;
-}
-
-export const initialState: CartState = {
-    cartProducts: [],
-    cartLength: 0,
-    cartSum: 0,
+export const initialState: IUserProps = {
+    signedIn: false,
+    loading: false,
+    userInfo: {} as User,
+    access_token: '',
 };

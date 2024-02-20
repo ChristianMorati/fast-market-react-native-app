@@ -1,6 +1,7 @@
-import { cartSlice } from "./slice";
+import { userSlice } from "./slice";
 
 export const {
-    addProductToCart,
-    removeProductFromCart
-} = cartSlice.actions;
+    logOff,
+    setSignedIn,
+    setUserInfo
+} = userSlice.actions;

@@ -1,80 +1,33 @@
-import { StyleSheet, View } from "react-native";
-import { useAuth } from "../../contexts/auth-context";
-import { Text, Button } from '@rneui/themed';
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { SectionList } from "react-native";
-import { colors } from "../../global-styles";
+import { View, Text, TouchableOpacity } from "react-native";
+import { useAppSelector } from "../../store/hooks/useAppSelector";
+import { useDispatch } from "react-redux";
+import { logOff } from "../../store/user/actions";
 
 const Settings = () => {
-    const auth = useAuth();
-
-    const logOff = () => {
-        AsyncStorage.removeItem('TOKEN');
-        AsyncStorage.removeItem('@User');
-        auth.setUserInfo(undefined);
-        auth.setFirstInit(true);
-        auth.setSignedIn(false);
-    }
-
-    const sections = [
-        {
-            title: 'Featured Products', data: [
-                <View style={{
-                    backgroundColor: '#2e2e2e',
-                    borderRadius: 16,
-                    padding: 16,
-                }}>
-                    <View style={{
-                    }}>
-                        <Text h4 h4Style={{ color: '#c6c6c6' }}>Minha Conta</Text>
-                        <Text style={{ color: '#aaaaaa' }}>{auth.userInfo?.username}</Text>
-                        <Text style={{ color: '#aaaaaa' }}>{auth.userInfo?.name}</Text>
-                        <Text style={{ color: '#aaaaaa' }}>CPF: {auth.userInfo?.cpf}</Text>
-                    </View>
-                    <View style={{
-                        justifyContent: 'center',
-                        alignItems: 'center',
-                        paddingTop: 10,
-                    }}>
-                        <Button
-                            title="Sair"
-                            loading={false}
-                            loadingProps={{ size: 'small', color: 'white' }}
-                            buttonStyle={{
-                                backgroundColor: 'rgba(250, 0, 50, 1)',
-                                borderRadius: 5,
-                            }}
-                            titleStyle={{ fontWeight: 'bold', fontSize: 20, color: 'white' }}
-                            containerStyle={{
-                                height: 50,
-                                width: 90,
-                            }}
-                            onPress={()=> logOff()}
-                        />
-                    </View>
-                </View>]
-        },
-    ];
+    const { userInfo } = useAppSelector((store) => store.user);
+    const dispatch = useDispatch();
 
     return (
-        <SafeAreaView style={styles.container}>
-            <SectionList
-                style={{}}
-                sections={sections}
-                renderItem={({ item }) => item}
-            />
-        </SafeAreaView>
+        <View
+            className="flex-1 bg-indigo-200"
+        >
+            <View className="bg-white p-4 m-2 rounded-md">
+                <View className=''>
+                    <Text className='text-slate-900 font-semibold'>Email: {userInfo?.username}</Text>
+                    <Text className='text-slate-900 font-semibold'>Nome: {userInfo?.name}</Text>
+                    <Text className='text-slate-900 font-semibold'>CPF: {userInfo?.cpf}</Text>
+                    <View className="flex mt-3">
+                        <TouchableOpacity
+                            className="bg-red-500 p-2 rounded-md"
+                            onPress={() => dispatch(logOff())}
+                        >
+                            <Text className="font-bold text-lg text-center text-white">sair</Text>
+                        </TouchableOpacity>
+                    </View>
+                </View>
+            </View>
+        </View>
     );
 }
-
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: colors.mainAppColor,
-        padding: 10,
-    },
-});
-
 
 export default Settings;

@@ -4,7 +4,6 @@ import Product from '../models/productModel';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import { BASE_URL_API } from '../../../config';
-import { useAuth } from './auth-context';
 import { CartItem } from '../store/cart/initialState';
 
 interface ProductContextProps {

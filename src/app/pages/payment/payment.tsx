@@ -1,6 +1,5 @@
 import React from 'react';
 import { Alert, Image, Pressable, SafeAreaView, SectionList, StyleSheet, Text, View } from 'react-native';
-import { colors } from '../../global-styles';
 import { useProductContext } from '../../contexts/product-context';
 import { usePaymentContext } from '../../contexts/payment-context';
 import { FlatList, GestureHandlerRootView } from 'react-native-gesture-handler';
@@ -28,11 +27,11 @@ const PaymentMethodCard: React.FC<PaymentMethodCardProps> = ({ paymentMethod }) 
       borderRadius: 8,
       marginVertical: 3,
     }}
-    onPress={
-      () => paymentMethod.action()
-    }
+      onPress={
+        () => paymentMethod.action()
+      }
     >
-      <Text>{paymentMethod.description}</Text><Image source={{uri: paymentMethod.img}} style={{ width: 40, aspectRatio: '1/1' }} />
+      <Text>{paymentMethod.description}</Text><Image source={{ uri: paymentMethod.img }} style={{ width: 40, aspectRatio: '1/1' }} />
     </Pressable>
   )
 }
@@ -41,7 +40,7 @@ const Payment: React.FC = () => {
   const productContext = useProductContext();
   const paymentContext = usePaymentContext();
 
-  
+
   return (
     <GestureHandlerRootView style={styles.container}>
       <View>
@@ -76,15 +75,13 @@ const Payment: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.mainAppColor,
     padding: 8,
   },
   title: {
     fontWeight: '500',
     fontSize: 18,
-    color: colors.title,
     paddingVertical: 4,
-},
+  },
 });
 
 export default Payment;

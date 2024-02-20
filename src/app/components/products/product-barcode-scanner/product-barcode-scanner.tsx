@@ -1,18 +1,19 @@
 import React, { useEffect, useState } from 'react';
-import { View, StyleSheet, TouchableOpacity, TextInput, Modal, Pressable, Image, Alert } from 'react-native';
-import { colors } from '../../../global-styles';
+import { View, StyleSheet, TouchableOpacity, TextInput, Modal, Pressable, Image, Alert, Text } from 'react-native';
 import { Feather, MaterialCommunityIcons } from '@expo/vector-icons';
 import Scanner from '../../scanner/scanner';
 import { useProductContext } from '../../../contexts/product-context';
 import { AntDesign } from '@expo/vector-icons';
 import { useRef } from 'react';
-import { Button, Text } from '@rneui/themed';
+import { Button } from '@rneui/themed';
 import { useFocusEffect, useIsFocused, useNavigation } from '@react-navigation/native';
 import { useAppSelector } from '../../../store/hooks/useAppSelector';
 import { useDispatch } from 'react-redux';
-import { addProductToCart, increment, decrement } from '../../../store/cart/actions';
+import { addProductToCart } from '../../../store/cart/actions';
 import { CartItem } from '../../../store/cart/initialState';
 import AlertModal from './modal';
+import colors from 'tailwindcss/colors';
+import { ActivityIndicator } from 'react-native';
 
 const ProductBarCodeScanner: React.FC = () => {
   const dispatch = useDispatch();
@@ -230,7 +231,7 @@ const ProductBarCodeScanner: React.FC = () => {
                 source={{ uri: product?.url_img }}
               />
               <View style={{ width: '100%', padding: 12 }}>
-                <Text h4 style={{ alignSelf: 'flex-start', color: 'lightgray' }}>Descrição</Text>
+                <Text style={{ alignSelf: 'flex-start', color: 'lightgray' }}>Descrição</Text>
                 <Text
                   style={[{ color: 'lightgray' }, styles.description]}
                   numberOfLines={2} ellipsizeMode="middle">
@@ -301,11 +302,12 @@ const ProductBarCodeScanner: React.FC = () => {
   }
 
   return (
-    <View style={styles.container}>
-      {cartLength === 10 && (<AlertModal cta={() => navigation.navigate('Pagamento')}/>)}
+    <View className='flex-1 m-2 border border-neutral-300 rounded-md p-2 bg-neutral-50'>
+      {cartLength === 10 && (<AlertModal cta={() => navigation.navigate('Pagamento')} />)}
+
+      <Text className='font-semibold text-black text-xl text-center'>Ler código</Text>
 
       <View style={styles.scannerArea}>
-
         {scannerActive && isFocused && (
           <Scanner
             onCodeScanned={onCodeScanned}
@@ -331,55 +333,48 @@ const ProductBarCodeScanner: React.FC = () => {
           </View>
         )}
       </View>
-      <View style={styles.scannedProductInfo}>
 
+      <View
+        className=''
+      >
         {productFoundedError && (
-          <View style={styles.containerErrorMessage}>
-            <Text style={styles.errorMessage}>
-              {productFoundedError} <Feather name="alert-triangle" size={12} color="yellow" />
-            </Text>
-          </View>
+          <Text
+            className='font-medium text-white bg-neutral-400 border border-yellow-200 text-center rounded-md py-4 my-1'
+          >
+            {productFoundedError} <Feather name="alert-triangle" size={12} color="yellow" />
+          </Text>
         )}
 
         {/* messages */}
         {isLoadingProduct && (
-          <View style={styles.containerErrorMessage}>
-            <Button
-              title="Solid"
-              color={'warning'}
-              loading
-              style={{
-                width: 10,
-                aspectRatio: '1/1',
-                borderRadius: 6,
-              }} />
-          </View>
+          <ActivityIndicator className='p-2 my-2 w-full' />
         )}
 
         {!productFoundedError && !productFounded && !isLoadingProduct && (
-          <Text style={[styles.title, { textDecorationLine: 'underline', height: 30 }]}>ou</Text>
+          <Text className='font-semibold text-lg underline text-center'>ou</Text>
         )}
         {/*end messages */}
 
         {productFounded && (<ProductModal />)}
 
-        <View style={styles.containerInputCode}>
+        <View className="flex-row justify-start rounded-lg overflow-hidden">
           <TextInput
-            style={styles.inputInsertCode}
+            className="bg-neutral-200 p-2 font-medium text-white"
+            style={{ width: '85%' }}
             placeholder='Digite o Código'
-            placeholderTextColor='white'
+            placeholderTextColor='black'
             keyboardType='numeric'
             onChangeText={handleInputChange}
             ref={textInputRef}
             value={code}
           />
           <TouchableOpacity
-            style={styles.buttonLimpar}
-            onPress={() => {
-              clearBarcodeData();
-            }}
+            className="bg-slate-900 flex justify-center items-center p-2"
+            style={{ width: '15%' }}
+            activeOpacity={0.5}
+            onPress={clearBarcodeData}
           >
-            <Feather name="trash-2" size={24} color="white" />
+            <Feather name="trash-2" size={20} color="white" />
           </TouchableOpacity>
         </View>
       </View>
@@ -411,12 +406,13 @@ const styles = StyleSheet.create({
     borderBottomLeftRadius: 10,
   },
   scannerArea: {
+    paddingTop: 10,
     backgroundColor: 'transparent',
   },
   BarCodeScannerContainerStyle: {
     height: 300,
     borderRadius: 15,
-    backgroundColor: 'black',
+    backgroundColor: colors.slate[900],
   },
   BarCodeScannerReScanButtonStyle: {
     padding: 12,
@@ -493,7 +489,6 @@ const styles = StyleSheet.create({
     marginVertical: 6,
   },
   buttonAdicionar: {
-    backgroundColor: colors.secondaryColor,
     borderRadius: 10,
     padding: 12,
     shadowColor: '#000',

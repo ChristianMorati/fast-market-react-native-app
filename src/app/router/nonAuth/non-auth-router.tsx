@@ -12,6 +12,9 @@ function NonAuthRouter() {
   return (
     <UserStackNavigator.Navigator
       initialRouteName='Loading Screen'
+      screenOptions={{
+        headerShown: false
+      }}
     >
       <UserStackNavigator.Screen
         name="Loading Screen"
@@ -27,6 +30,9 @@ function NonAuthRouter() {
       <UserStackNavigator.Screen
         name="Sign Up"
         component={SignUp}
+        options={{
+          headerShown: false
+        }}
       />
     </UserStackNavigator.Navigator>
   )

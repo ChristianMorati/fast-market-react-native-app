@@ -1,23 +1,22 @@
 import React, { useState } from 'react';
-import { View, Image, StyleSheet, TouchableOpacity, FlatList } from 'react-native';
-import { Text } from '@rneui/themed';
-import { colors, globalStyles } from '../../../global-styles';
+import { View, Image, TouchableOpacity, Text, ScrollView } from 'react-native';
 import Product from '../../../models/productModel';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { FontAwesome } from '@expo/vector-icons';
 import { useProductContext } from '../../../contexts/product-context';
-
 import { Dimensions } from 'react-native';
-import Carousel from 'react-native-reanimated-carousel';
 import { useDispatch } from 'react-redux';
 import { useAppSelector } from '../../../store/hooks/useAppSelector';
-import { addProductToCart } from '../../../store/cart/actions'
+import { addProductToCart } from '../../../store/cart/actions';
 
 interface ProductItemProps {
     item: Product;
+    style: any;
 }
 
-const ProductItem: React.FC<ProductItemProps> = ({ item }) => {
+const width = Dimensions.get('window').width;
+
+const ProductItem: React.FC<ProductItemProps> = ({ item, style }) => {
     const productContext = useProductContext();
 
     const { cartLength, cartProducts } = useAppSelector((store) => store.cart)
@@ -28,36 +27,46 @@ const ProductItem: React.FC<ProductItemProps> = ({ item }) => {
     priceCents = ',' + priceCents.slice();
 
     return (
-        <View style={styles.productContainer}>
+        <View className={`bg-neutral-50 justify-between rounded-md h-100 w-50 border border-neutral-300`} style={{ ...style }}>
             <Image
+                className={`align-top object-contain rounded-t-md bg-white`}
+                style={{
+                    height: 150,
+                    resizeMode: 'contain',
+                }}
                 source={{ uri: item?.url_img }}
-                style={styles.image}
             />
-            <Text style={styles.description} numberOfLines={2} ellipsizeMode="tail">{item?.description.toUpperCase()}</Text>
-            <View style={{}}>
-                <View style={styles.priceContainer}>
-                    <Text style={[styles.price, { fontWeight: '500' }]}>
+            <View className='p-1'>
+                <Text className={`font-semibold text-neutral-900 text-ellipsis text-center`}
+                    style={{ fontSize: 10 }}
+                    numberOfLines={1}>
+                    {item?.description.toUpperCase()}
+                </Text>
+                <View className='justify-between flex-row pt-1'>
+                    <Text className={`font-semibold font-xl text-neutral-900`}>
                         R$
-                        <Text style={[styles.price, { fontSize: 18 }]}>{priceDezenas}</Text>
+                        <Text className={`font-black font-xl text-neutral-900`}>{priceDezenas}</Text>
                         {priceCents}
                     </Text>
 
                     {item.description.split(' ').includes("KG") ? (
-                        <Text></Text> // Render something specific for products containing "KG"
+                        <Text>{''}</Text>
                     ) : (
                         <>
-                            {/* Render either the full cart button or add-to-cart button based on conditions */}
                             {cartProducts && cartLength == 10 ? (
-                                <Text style={[globalStyles.button, styles.fullCart]}>
-                                    <Ionicons name="md-cart-outline" size={14} color="white" />
-                                    Cheio
+                                <Text className={`font-semibold font-sm text-white bg-neutral-500 px-3 py-1 rounded-sm`}>
+                                    <Ionicons size={14} name="md-cart-outline" color="white" />
+                                    {' Cheio'}
                                 </Text>
                             ) : (
                                 <TouchableOpacity
-                                    style={[globalStyles.button, styles.addToCart]}
-                                    onPress={() => dispatch(addProductToCart({...item, quantity: 1}))}
+                                    className={`bg-fuchsia-600 px-3 py-1 rounded-sm`}
+                                    activeOpacity={.5}
+                                    onPress={() => dispatch(addProductToCart({ ...item, quantity: 1 }))}
                                 >
-                                    <FontAwesome name="cart-arrow-down" size={16} color="white" />
+                                    <Text className='text-white'>
+                                        <FontAwesome name="cart-arrow-down" size={16} />
+                                    </Text>
                                 </TouchableOpacity>
                             )}
                         </>
@@ -69,131 +78,27 @@ const ProductItem: React.FC<ProductItemProps> = ({ item }) => {
 };
 
 
-type IndexProps = {
-    autoplay: boolean,
-    scrollAnimationDuration: number
-}
 
-function Index({ autoplay, scrollAnimationDuration }: IndexProps) {
-    const width = Dimensions.get('window').width;
+function FeaturedProducts() {
     const productContext = useProductContext();
-    const [currentIndex, setCurrentIndex] = useState(0);
 
     return (
-        <View style={{ paddingVertical: 6, }}>
-            <Carousel
-                style={{ width: width }}
-                width={width / 2 - 10}
-                loop={true}
-                height={200}
-                autoPlay={autoplay}
-                data={productContext?.products ?? []}
-                scrollAnimationDuration={scrollAnimationDuration}
-                onSnapToItem={(index) => {
-                    setCurrentIndex(index);
-                    //     if (currentIndex === productContext?.products?.length - 1) {
-                    //         setTimeout(() => {
-
-                    //         }, 10000);
-                    //     }
-                }}
-                renderItem={({ item, index }) => (
-                    <View
-                        style={{
-                            marginLeft: 10,
-                        }}
-                    >
-                        <ProductItem item={item} />
-                    </View>
-                )}
-            />
-            <View style={{ flexDirection: 'row', justifyContent: 'center', marginVertical: 8 }}>
-                {productContext.products?.map((_, index) => (
-                    <View
-                        key={index}
-                        style={{
-                            width: 8,
-                            height: 8,
-                            borderRadius: 5,
-                            backgroundColor: index === currentIndex ? 'rgb(43, 117, 255)' : 'gray',
-                            marginHorizontal: 4,
-                        }}
-                    />
-                ))}
-            </View>
-        </View>
+        <ScrollView
+            className=''
+            horizontal
+            decelerationRate="fast"
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={{ paddingLeft: 8 }}
+        >
+            {productContext?.products?.map((item, index) => (
+                <ProductItem
+                    key={index}
+                    item={item}
+                    style={{ width: width / 2.3, marginRight: 8 }}
+                />
+            ))}
+        </ScrollView>
     );
 }
-
-const width = Dimensions.get('window').width;
-
-const FeaturedProducts: React.FC = () => {
-    return (
-        <>
-            <Index scrollAnimationDuration={200} autoplay={false} />
-        </>
-
-    );
-}
-
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        height: 'auto',
-    },
-    image: {
-        width: '100%',
-        height: width / 3,
-        resizeMode: 'contain',
-        backgroundColor: 'white',
-        borderTopLeftRadius: 6,
-        borderTopRightRadius: 6,
-    },
-    productContainer: {
-        backgroundColor: colors.productFooter,
-        borderColor: 'black',
-        justifyContent: 'space-between',
-        height: '100%',
-        borderRadius: 6,
-        paddingBottom: 4,
-    },
-    description: {
-        fontSize: 11,
-        textAlign: 'center',
-        paddingHorizontal: 2,
-        fontWeight: '600',
-        color: 'lightgray'
-    },
-    priceContainer: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        paddingHorizontal: 10,
-        paddingVertical: 4,
-    },
-    price: {
-        fontSize: 14,
-        fontWeight: 'bold',
-        color: 'lightgray'
-    },
-    disabledButton: {
-        backgroundColor: 'black',
-    },
-    messageError: {
-        marginLeft: 14,
-        fontWeight: '500',
-        fontSize: 18,
-        color: 'red',
-    },
-    addToCart: {
-        backgroundColor: '#7D0E7C',
-        paddingHorizontal: 12,
-        paddingVertical: 6,
-        alignSelf: 'flex-end'
-    },
-    fullCart: {
-        backgroundColor: '#7D0E7C',
-        color: 'white',
-    }
-});
 
 export default FeaturedProducts;
