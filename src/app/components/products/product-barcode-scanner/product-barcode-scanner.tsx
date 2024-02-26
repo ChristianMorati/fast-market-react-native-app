@@ -302,7 +302,7 @@ const ProductBarCodeScanner: React.FC = () => {
   }
 
   return (
-    <View className='flex-1 m-2 border border-neutral-300 rounded-md p-2 bg-neutral-50'>
+    <View className='flex-1 m-2 rounded-2xl p-2 bg-white'>
       {cartLength === 10 && (<AlertModal cta={() => navigation.navigate('Pagamento')} />)}
 
       <Text className='font-semibold text-black text-xl text-center'>Ler código</Text>
@@ -334,9 +334,7 @@ const ProductBarCodeScanner: React.FC = () => {
         )}
       </View>
 
-      <View
-        className=''
-      >
+      <View className=''>
         {productFoundedError && (
           <Text
             className='font-medium text-white bg-neutral-400 border border-yellow-200 text-center rounded-md py-4 my-1'
@@ -359,7 +357,7 @@ const ProductBarCodeScanner: React.FC = () => {
 
         <View className="flex-row justify-start rounded-lg overflow-hidden">
           <TextInput
-            className="bg-neutral-200 p-2 font-medium text-white"
+            className="bg-neutral-200 p-2 font-medium text-slate-950"
             style={{ width: '85%' }}
             placeholder='Digite o Código'
             placeholderTextColor='black'
@@ -411,8 +409,8 @@ const styles = StyleSheet.create({
   },
   BarCodeScannerContainerStyle: {
     height: 300,
-    borderRadius: 15,
-    backgroundColor: colors.slate[900],
+    borderRadius: 10,
+    backgroundColor: colors.slate[950],
   },
   BarCodeScannerReScanButtonStyle: {
     padding: 12,

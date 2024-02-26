@@ -6,7 +6,7 @@ import { useProductContext } from '../../../contexts/product-context';
 import { Swipeable } from 'react-native-gesture-handler';
 import { NavigationType } from '../../../router/root-navigator';
 import { useDispatch } from 'react-redux';
-import { removeProductFromCart } from '../../../store/cart/actions'
+import { addProductToCart, removeProductFromCart } from '../../../store/cart/actions'
 import { useAppSelector } from '../../../store/hooks/useAppSelector';
 import { CartItem } from '../../../store/cart/initialState';
 
@@ -40,12 +40,27 @@ const ProductItem: React.FC<ProductItemProps> = ({ item }) => {
     return (
         <Swipeable
             renderLeftActions={leftAction}>
-            <View className='bg-white p-2 border-b border-slate-300'>
+            <View className='bg-white p-2 border-b border-neutral-300'>
                 <View className='flex-row items-center'>
                     <Text
                         className='absolute z-10 left-0 top-1 font-bold text-white bg-fuchsia-600 border border-white px-2'>
                         {item.quantity}
                     </Text>
+                    <View
+                        className='absolute z-10 right-0 top-1 flex flex-row'
+                    >
+                        <TouchableOpacity className='w-6 py-1'
+                            onPress={() => dispatch(addProductToCart({ ...item, quantity: 1 }))}>
+                            <Text className='text-white text-center bg-green-600 rounded-s-md'>+</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity className='p-2 py-1 bg-white'>
+                            <Text className=''>{item?.quantity}</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity className='w-6 py-1'
+                            onPress={() => dispatch(removeProductFromCart(item))}>
+                            <Text className='text-white text-center bg-red-500 rounded-s-md'>-</Text>
+                        </TouchableOpacity>
+                    </View>
                     <Image source={{ uri: item?.url_img }}
                         className=''
                         style={{
@@ -86,8 +101,8 @@ const CartProducts = () => {
     const { cartSum, cartLength, cartProducts } = useAppSelector((store: { cart: any; }) => store.cart)
 
     return (
-        <View className='bg-neutral-100 p-2 rounded-md border border-neutral-300 m-2 mt-0'>
-            <View className="flex-row justify-between items-end">
+        <View className='bg-white p-2 rounded-md m-2 mt-0'>
+            <View className="flex-row justify-between items-center">
                 <Text className='font-semibold text-black text-lg'>Carrinho</Text>
                 <Text
                     className={`font-semibold text-black text-md ${cartLength < 10 ? 'text-green-700' : 'text-black'}`}
@@ -113,7 +128,7 @@ const CartProducts = () => {
                     </View>
                     <View className="flex justify-center items-center my-4">
                         <TouchableOpacity
-                            className="bg-green-500 justify-center items-center rounded-md px-4 py-2 h-100"
+                            className="bg-green-500 justify-center items-center rounded-xl px-6 py-4 h-100"
                             onPress={() => {
                                 navigation.navigate('Pagamento');
                             }}>

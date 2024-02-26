@@ -35,7 +35,7 @@ export const cartSlice = createSlice({
             const cartLength = calculateCartLength(state.cartProducts)
 
             const isCartFull = cartLength === 10;
-            if (isCartFull) return console.log('isCartFull');
+            if (isCartFull) return console.log('isCartFull'); //
 
             // IS KG
             const productDescription = action.payload.description;
@@ -62,7 +62,7 @@ export const cartSlice = createSlice({
             // IS UN
             const canAdd = (itemsToAdd + cartLength) <= 10;
 
-            if (!canAdd) return console.log('cart full');
+            if (!canAdd) return console.log('cart full'); //
 
             if (productIndex !== -1) {
                 state.cartProducts[productIndex].quantity += itemsToAdd

@@ -27,7 +27,7 @@ export function LastPurchase() {
     const products = productContext.products;
 
     return (
-        <View className={`rounded-md bg-neutral-50 mx-2 mb-2 relative border border-neutral-300`}>
+        <View className={`rounded-md bg-white mx-2 mb-2 relative`}>
             <View className="flex-row justify-between mx-2">
                 <Text className="p-2 text-lg font-semibold text-right">Compra anterior</Text>
                 <Text className="p-2 pt-3 font-medium">12/12/2024</Text>

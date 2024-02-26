@@ -8,7 +8,7 @@ import { ScapeFromBottomTab } from '../../components/scape-from-bottom-tabs';
 
 function Header() {
   return (
-    <View className='flex flex-row bg-neutral-50 m-2 rounded-md border border-neutral-300 overflow-hidden'>
+    <View className='flex flex-row bg-white px-2 mb-2'>
       <Image
         className={``}
         source={require('../../../../assets/Fast_market_logo.png')}
@@ -29,8 +29,8 @@ function Home() {
         <TopButtonsNav />
         <LastPurchase />
         <FeaturedProducts />
-        <ScapeFromBottomTab />
       </ScrollView>
+      <ScapeFromBottomTab />
     </SafeAreaView>
   );
 }

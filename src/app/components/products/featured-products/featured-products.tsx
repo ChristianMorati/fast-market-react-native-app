@@ -27,7 +27,7 @@ const ProductItem: React.FC<ProductItemProps> = ({ item, style }) => {
     priceCents = ',' + priceCents.slice();
 
     return (
-        <View className={`bg-neutral-50 justify-between rounded-md h-100 w-50 border border-neutral-300`} style={{ ...style }}>
+        <View className={`bg-white justify-between rounded-md h-100 w-50`} style={{ ...style }}>
             <Image
                 className={`align-top object-contain rounded-t-md bg-white`}
                 style={{
@@ -37,15 +37,17 @@ const ProductItem: React.FC<ProductItemProps> = ({ item, style }) => {
                 source={{ uri: item?.url_img }}
             />
             <View className='p-1'>
-                <Text className={`font-semibold text-neutral-900 text-ellipsis text-center`}
-                    style={{ fontSize: 10 }}
-                    numberOfLines={1}>
-                    {item?.description.toUpperCase()}
-                </Text>
-                <View className='justify-between flex-row pt-1'>
-                    <Text className={`font-semibold font-xl text-neutral-900`}>
+                <View>
+                    <Text className={`font-bold text-neutral-900 text-ellipsis`}
+                        style={{ fontSize: 10 }}
+                        numberOfLines={1}>
+                        {item?.description.toUpperCase()}
+                    </Text>
+                </View>
+                <View className='flex-row justify-between items-center pt-1'>
+                    <Text className={`font-semibold text-xs text-green-900`}>
                         R$
-                        <Text className={`font-black font-xl text-neutral-900`}>{priceDezenas}</Text>
+                        <Text className={`text-lg font-bold`}>{priceDezenas}</Text>
                         {priceCents}
                     </Text>
 
@@ -54,7 +56,7 @@ const ProductItem: React.FC<ProductItemProps> = ({ item, style }) => {
                     ) : (
                         <>
                             {cartProducts && cartLength == 10 ? (
-                                <Text className={`font-semibold font-sm text-white bg-neutral-500 px-3 py-1 rounded-sm`}>
+                                <Text className={`font-semibold font-sm text-white bg-slate-900 px-3 py-1 rounded-sm`}>
                                     <Ionicons size={14} name="md-cart-outline" color="white" />
                                     {' Cheio'}
                                 </Text>

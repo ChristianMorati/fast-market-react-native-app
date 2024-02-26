@@ -10,7 +10,7 @@ const Products: React.FC = () => {
   const sections = [
     {
       data: [
-        <KeyboardAvoidingView behavior='padding'>
+        <KeyboardAvoidingView behavior='height'>
           <ProductBarCodeScanner />
         </KeyboardAvoidingView>
       ]
