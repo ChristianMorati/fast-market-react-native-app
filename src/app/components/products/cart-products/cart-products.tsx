@@ -27,7 +27,9 @@ const ProductItem: React.FC<ProductItemProps> = ({ item }) => {
                     width: 50,
                 }}
                 onPress={() => {
-                    dispatch(removeProductFromCart(item));
+                    setTimeout(() => {
+                        dispatch(removeProductFromCart(item));
+                    }, 200)
                 }}
             >
                 <Text>

@@ -47,6 +47,8 @@ export default function LoadingScreen() {
                         const retryResponse = await axios(originalReq);
                         refreshAttempts = 0;
 
+                        console.log('retryResponse: ', retryResponse)
+
                         return retryResponse;
                     } else {
                         throw error;
@@ -97,6 +99,7 @@ export default function LoadingScreen() {
                 await AsyncStorage.setItem('TOKEN', newToken);
                 const userString = await AsyncStorage.getItem('@User');
                 const user = JSON.parse(userString);
+                console.log('user: ', user);
                 dispatch(setSignedIn({ signedIn: true }));
                 dispatch(setUserInfo({ userInfo: user }));
 

@@ -1,14 +1,16 @@
-import AsyncStorage from "@react-native-async-storage/async-storage"
-
 
 export type PurchaseState = {
     lastPurchase: any,
-    loading: boolean
+    allPurchases: any,
+    loading: boolean,
+    loadingAllPurchases: boolean,
 }
 
 export const initialState: PurchaseState = {
     lastPurchase: [],
+    allPurchases: [],
     loading: true,
+    loadingAllPurchases: true,
 }
 
 // (async function () {

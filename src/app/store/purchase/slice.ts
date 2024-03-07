@@ -1,7 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { initialState } from './initialState';
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import loadLastPurchaseAsyncBuilder from "./builder/loadLastPurchaseAsync";
+import loadLastPurchaseAsyncBuilder from "./builder/loadLastPurchaseBuilder";
+import loadAllPurchasesBuilder from "./builder/loadAllPurchasesBuilder";
 
 export const purchaseSlice = createSlice({
     name: 'user',
@@ -21,6 +21,7 @@ export const purchaseSlice = createSlice({
         // },
     },
     extraReducers: (builder) => {
-        loadLastPurchaseAsyncBuilder(builder);
+        loadLastPurchaseAsyncBuilder(builder)
+        loadAllPurchasesBuilder(builder)
     },
 });

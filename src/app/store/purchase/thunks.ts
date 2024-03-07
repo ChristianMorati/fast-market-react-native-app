@@ -28,3 +28,31 @@ export const loadPurchaseAsync = createAsyncThunk(
         return response.data;
     }
 )
+
+
+export const loadAllPurchasesAsync = createAsyncThunk(
+    "loadAll/purchase",
+    async () => {
+        const response = await new Promise<any>(async (resolve, reject) => {
+            const user = await AsyncStorage.getItem('@User').then(res => JSON.parse(res!));
+
+            if(!user) {
+                console.log('failed to load user');
+            }
+
+            const { id } = user;
+
+            const fetchObj = await fetch(`${BASE_URL_API}/purchase/all/14`);
+
+            if(!fetchObj.ok) reject(undefined);
+
+            const responseData = await fetchObj.json();
+            const allPurchases = responseData;
+            console.log(allPurchases)
+            resolve({
+                data: { allPurchases }
+            });
+        })
+        return response.data;
+    }
+)

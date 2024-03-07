@@ -15,12 +15,13 @@ const loginAsyncBuilder = (
             state.access_token = access_token;
             state.userInfo = user;
             state.signedIn = true;
-            state.loading = false;
 
             (async () => {
                 await AsyncStorage.setItem('@User', JSON.stringify(user));
                 await AsyncStorage.setItem('TOKEN', access_token);
             })()
+
+            state.loading = false;
         })
         .addCase(loginAsync.pending, (state, action) => {
             state.loading = true;

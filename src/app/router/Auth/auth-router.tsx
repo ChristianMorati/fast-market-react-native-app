@@ -7,9 +7,11 @@ import Products from "../../pages/products/products";
 import Payment from "../../pages/payment/payment";
 import { Image } from "@rneui/base";
 import Home from "../../pages/home/home";
+import PurchaseHystory from "../../pages/purchase-history/purchase-history";
 import { useNavigation } from "@react-navigation/native";
 import Settings from "../../pages/settings/settings";
 import { useAppSelector } from "../../store/hooks/useAppSelector";
+
 
 const Tab = createBottomTabNavigator();
 const Drawer = createDrawerNavigator();
@@ -37,12 +39,38 @@ function ProductStack() {
   )
 };
 
+const HomeStackNavigator = createNativeStackNavigator();
+
+function HomeStack() {
+  return (
+    <HomeStackNavigator.Navigator
+      initialRouteName="Home"
+    >
+      <HomeStackNavigator.Screen
+        name="Home"
+        component={Home}
+        options={{
+          headerShown: false
+        }}
+      />
+      <HomeStackNavigator.Screen
+        name="PurchaseHystory"
+        component={PurchaseHystory}
+        options={{
+          headerTitle: "Histórico de Compras"
+        }}
+      />
+    </HomeStackNavigator.Navigator>
+  )
+}
+
+
 function BottomTabs() {
   const { cartLength, cartProducts } = useAppSelector((store) => store.cart);
 
   return (
     <Tab.Navigator
-      initialRouteName="Home"
+      initialRouteName="/"
       screenOptions={{
         tabBarHideOnKeyboard: true,
         tabBarStyle: {
@@ -58,8 +86,8 @@ function BottomTabs() {
       }}
     >
       <Tab.Screen
-        name="Home"
-        component={Home}
+        name="/"
+        component={HomeStack}
         options={{
           headerShown: false,
           tabBarLabel: ({ focused, color, ...otherProps }) => (
